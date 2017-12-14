@@ -1,0 +1,36 @@
+{
+  "name": "osdi-proxy",
+  "version": "1.0.0",
+  "description": "An adapter for the OSDI spec for every CRM",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justicedemocrats/osdi-proxy.git"
+  },
+  "keywords": [
+    "osdi",
+    "nodejs",
+    "express",
+    "progressive",
+    "politics",
+    "crm",
+    "proxy",
+    "wrapper"
+  ],
+  "author": "Ben Packer <ben.paul.ryan.packer@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/justicedemocrats/osdi-proxy/issues"
+  },
+  "homepage": "https://github.com/justicedemocrats/osdi-proxy#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "debug": "^3.1.0",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
+    "superagent": "^3.8.2"
+  }
+}
