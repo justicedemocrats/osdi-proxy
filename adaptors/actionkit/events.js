@@ -89,7 +89,7 @@ const configureAkify = (api, config) => async osdi => {
       confirmed: 'active',
       tentative: 'active',
       rejected: 'cancelled',
-      cancelled: 'hide'
+      cancelled: 'deleted'
     }[osdi.status],
     creator: osdi.organizer_id
       ? `/rest/v1/user/${osdi.organizer_id}/`
