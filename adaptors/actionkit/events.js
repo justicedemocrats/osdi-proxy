@@ -107,8 +107,8 @@ const configureAkify = (api, config) => async osdi => {
   return result
 }
 
-const ensureUser = email_address => {
-  const found = await api.get('user').query({ email: osdi.contact.email_address })
+const ensureUser = (api, email_address)  => {
+  const found = await api.get('user').query({ email: email_address })
 
   let creator = found.body.objects[0] ? found.body.objects[0].id : undefined
 
@@ -151,7 +151,7 @@ module.exports = (api, config) => {
       return await osdiify(result.body)
     },
     create: async object => {
-      object.organizer_id = await ensureUser(object.contact.email_address)
+      object.organizer_id = await ensureUser(api, object.contact.email_address)
       const akified = await akify(object)
 
       const result = await api.post('event').send(akified)
