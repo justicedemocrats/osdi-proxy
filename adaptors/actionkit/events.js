@@ -101,6 +101,7 @@ const configureAkify = (api, config) => async osdi => {
     ends_at: osdi.start_date ? moment(osdi.end_date).format(format) : undefined,
     field_tags: osdi.tags ? JSON.stringify(osdi.tags) : undefined,
     field_type: osdi.type,
+    host_is_confirmed: true,
     field_contact_email_address: osdi.contact
       ? osdi.contact.email_address
       : undefined,
