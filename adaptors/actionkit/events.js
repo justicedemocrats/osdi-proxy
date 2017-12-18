@@ -119,11 +119,7 @@ const ensureUser = async (api, email_address) => {
   let creator = found.body.objects[0] ? found.body.objects[0].id : undefined
 
   if (creator === undefined) {
-    const created = await api.post('user').send({
-      email: osdi.contact.email_address,
-      phone: osdi.contact.phone_number,
-      name: osdi.contact.name
-    })
+    const created = await api.post('user').send({ email: email_address })
 
     const split_location = created.headers.location.split('/')
     const created_at = split_location[split_location.length - 2]
