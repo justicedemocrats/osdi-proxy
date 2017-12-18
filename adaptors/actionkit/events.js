@@ -107,7 +107,7 @@ const configureAkify = (api, config) => async osdi => {
   return result
 }
 
-const ensureUser = (api, email_address)  => {
+const ensureUser = async (api, email_address) => {
   const found = await api.get('user').query({ email: email_address })
 
   let creator = found.body.objects[0] ? found.body.objects[0].id : undefined
