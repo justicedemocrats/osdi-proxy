@@ -1,3 +1,6 @@
+const moment = require('moment')
+const format = 'YYYY-MM-DDTHH:mm:ss'
+
 const getEventField = (ak, name) => {
   const match = ak.fields.filter(field => field.name == name)[0]
   return match ? match.value : undefined
@@ -15,7 +18,7 @@ const setEventField = async (api, ak, name, value) => {
   }
 }
 
-const configureOsdify = api => async (ak, config = {}) => {
+const configureOsdify = (api, config) => async ak => {
   return {
     identifiers: [`actionkit:${ak.id}`],
     location: {
@@ -27,19 +30,21 @@ const configureOsdify = api => async (ak, config = {}) => {
       location: [ak.latitude, ak.longitude]
     },
     browser_url: config.eventUrlBase + `/${ak.id}`,
-    name: ak.title ? ak.title.toLowerCase().replace(' ', '-') : undefined,
+    name: ak.title ? ak.title.toLowerCase().replace(/ /g, '-') : undefined,
     title: ak.title,
     start_date: ak.starts_at,
     end_date: ak.ends_at,
     description: ak.public_description,
     instructions: ak.directions,
     organizer_id: ak.creator.split('/')[4],
-    status: ak.is_approved ? 'tentative' : 'confirmed',
+    status: ak.is_approved ? 'confirmed' : 'tentative',
     type: getEventField(ak, 'type') || 'Unknown',
-    tags: getEventField(ak, 'tags') ? getEventField(ak, 'tags').split(',') : [],
+    tags: getEventField(ak, 'tags')
+      ? JSON.parse(getEventField(ak, 'tags'))
+      : [],
     contact: {
-      email: getEventField(ak, 'contact_email'),
-      phone: getEventField(ak, 'contact_phone'),
+      email_address: getEventField(ak, 'contact_email_address'),
+      phone_number: getEventField(ak, 'contact_phone_number'),
       name: getEventField(ak, 'contact_name')
     }
   }
@@ -57,8 +62,27 @@ const filterUndefined = obj => {
   }, {})
 }
 
-const configureAkify = api => async (osdi, config = {}) => {
-  return filterUndefined({
+const configureAkify = (api, config) => async osdi => {
+  const { email_address } = osdi.contact
+  const found = await api.get('user').query({ email: email_address })
+
+  let creator = found.body.objects[0]
+
+  if (creator === undefined) {
+    const created = await api
+      .post('user')
+      .send({
+        email: osdi.contact.email_address,
+        phone: osdi.contact.phone_number,
+        name: osdi.contact.name
+      })
+
+    const split_location = created.headers.location.split('/')
+    const created_at = split_location[split_location.length - 2]
+    creator = {resource_uri: `/rest/v1/user/${created_at}/`}
+  }
+
+  const result = filterUndefined({
     address1: osdi.location
       ? osdi.location.address_lines ? osdi.location.address_lines[0] : undefined
       : undefined,
@@ -70,6 +94,8 @@ const configureAkify = api => async (osdi, config = {}) => {
     city: osdi.location ? osdi.location.locality : undefined,
     state: osdi.location ? osdi.location.region : undefined,
     venue: osdi.location ? osdi.location.venue : undefined,
+    public_description: osdi.description,
+    directions: osdi.instructions,
     county: 'United States',
     zip: osdi.location ? osdi.location.postal_code : undefined,
     is_approved: osdi.status == 'confirmed',
@@ -80,28 +106,40 @@ const configureAkify = api => async (osdi, config = {}) => {
       rejected: 'cancelled',
       cancelled: 'hide'
     }[osdi.status],
-    starts_at: osdi.start_date,
-    ends_at: osdi.end_date,
-    field_tags: osdi.tags,
+    creator: creator.resource_uri,
+    campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
+    starts_at: osdi.start_date
+      ? moment(osdi.start_date).format(format)
+      : undefined,
+    ends_at: osdi.start_date ? moment(osdi.end_date).format(format) : undefined,
+    field_tags: osdi.tags ? JSON.stringify(osdi.tags) : undefined,
     field_type: osdi.type,
-    field_contact_email: osdi.contact ? osdi.contact.email : undefined,
-    field_contact_phone: osdi.contact ? osdi.contact.phone : undefined,
+    field_contact_email_address: osdi.contact
+      ? osdi.contact.email_address
+      : undefined,
+    field_contact_phone_number: osdi.contact
+      ? osdi.contact.phone_number
+      : undefined,
     field_contact_name: osdi.contact ? osdi.contact.name : undefined
   })
+
+  return result
 }
 
-module.exports = api => {
-  const osdiify = configureOsdify(api)
-  const akify = configureAkify(api)
+module.exports = (api, config) => {
+  const osdiify = configureOsdify(api, config)
+  const akify = configureAkify(api, config)
 
   return {
     count: async () => {
       const result = await api.get('event')
       return result.body.meta.total_count
     },
-    findAll: async (params) => {
+    findAll: async params => {
       const page = (params && params.page) || 0
-      const result = await api.get('event').query({_offset: page * 100, _limit: 100})
+      const result = await api
+        .get('event')
+        .query({ _offset: page * 100, _limit: 100 })
       const { objects } = result.body
       return await Promise.all(objects.map(osdiify))
     },
@@ -110,16 +148,41 @@ module.exports = api => {
       return await osdiify(result.body)
     },
     create: async object => {
-      return await api.post('event').send(akify(object))
-    },
-    edit: async (id, edits) => {
-      const akified = await akify(edits, {id})
+      const akified = await akify(object)
 
-      const original = (await api.get(`event/${id}`)).body
+      const result = await api.post('event').send(akified)
+      const split_location = result.headers.location.split('/')
+      const event_id = split_location[split_location.length - 2]
+
+      const for_field_creation = { id: event_id, fields: [] }
+
       const fields = Object.keys(akified).filter(key => key.startsWith('field'))
 
       await Promise.all(
-        fields.map(attr => setEventField(api, original, attr.split('field_')[1], akified[attr]))
+        fields.map(attr =>
+          setEventField(
+            api,
+            for_field_creation,
+            attr.split('field_')[1],
+            akified[attr]
+          )
+        )
+      )
+
+      const to_return = await api.get(`event/${event_id}`)
+      return await osdiify(to_return.body)
+    },
+    edit: async (id, edits) => {
+      const akified = await akify(edits, { id })
+
+      const original = (await api.get(`event/${id}`)).body
+
+      const fields = Object.keys(akified).filter(key => key.startsWith('field'))
+
+      await Promise.all(
+        fields.map(attr =>
+          setEventField(api, original, attr.split('field_')[1], akified[attr])
+        )
       )
 
       fields.forEach(f => {

@@ -1,7 +1,8 @@
 const config = {
   base: process.env.AK_BASE,
   username: process.env.AK_USERNAME,
-  password: process.env.AK_PASSWORD
+  password: process.env.AK_PASSWORD,
+  defaultCampaign: process.env.AK_DEFAULT_CAMPAIGN
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ module.exports = (config) => {
 
   'people events attendances'
     .split(' ')
-    .forEach(key => (exports[key] = require(`./${key}`)(api)))
+    .forEach(key => (exports[key] = require(`./${key}`)(api, config)))
 
   return exports
 }

@@ -10,7 +10,7 @@ const osdiify = async (api, ak) => {
   return {
     family_name: ak.first_name,
     given_name: ak.last_name,
-    email_address: [{address: ak.email}],
+    email_addresses: [{address: ak.email}],
     phone_numbers
   }
 }

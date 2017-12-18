@@ -31,7 +31,9 @@ for (let r in apps) {
 const config = {
   base: process.env.AK_BASE,
   username: process.env.AK_USERNAME,
-  password: process.env.AK_PASSWORD
+  password: process.env.AK_PASSWORD,
+  eventUrlBase: 'https://go.justicedemocrats.com/event/event',
+  defaultCampaign: process.env.AK_DEFAULT_CAMPAIGN
 }
 
 app.use(secret)
