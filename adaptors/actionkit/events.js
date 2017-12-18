@@ -87,7 +87,7 @@ const configureAkify = (api, config) => async osdi => {
       rejected: 'cancelled',
       cancelled: 'hide'
     }[osdi.status],
-    creator: `/rest/v1/user/${osdi.organizer_id}/`,
+    creator: osdi.organizer_id ? `/rest/v1/user/${osdi.organizer_id}/` : undefined,
     campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
     starts_at: osdi.start_date
       ? moment(osdi.start_date).format(format)
