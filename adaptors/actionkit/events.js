@@ -37,7 +37,11 @@ const configureOsdify = (api, config) => async ak => {
     description: ak.public_description,
     instructions: ak.directions,
     organizer_id: ak.creator.split('/')[4],
-    status: ak.is_approved ? 'confirmed' : 'tentative',
+    status:
+      ak.status == 'cancelled' || ak.status == 'deleted'
+        ? ak.is_approved ? 'cancelled' : 'rejected'
+        : ak.is_approved ? 'confirmed' : 'tentative',
+
     type: getEventField(ak, 'type') || 'Unknown',
     tags: getEventField(ak, 'tags')
       ? JSON.parse(getEventField(ak, 'tags'))
@@ -87,7 +91,9 @@ const configureAkify = (api, config) => async osdi => {
       rejected: 'cancelled',
       cancelled: 'hide'
     }[osdi.status],
-    creator: osdi.organizer_id ? `/rest/v1/user/${osdi.organizer_id}/` : undefined,
+    creator: osdi.organizer_id
+      ? `/rest/v1/user/${osdi.organizer_id}/`
+      : undefined,
     campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
     starts_at: osdi.start_date
       ? moment(osdi.start_date).format(format)
@@ -113,13 +119,11 @@ const ensureUser = async (api, email_address) => {
   let creator = found.body.objects[0] ? found.body.objects[0].id : undefined
 
   if (creator === undefined) {
-    const created = await api
-      .post('user')
-      .send({
-        email: osdi.contact.email_address,
-        phone: osdi.contact.phone_number,
-        name: osdi.contact.name
-      })
+    const created = await api.post('user').send({
+      email: osdi.contact.email_address,
+      phone: osdi.contact.phone_number,
+      name: osdi.contact.name
+    })
 
     const split_location = created.headers.location.split('/')
     const created_at = split_location[split_location.length - 2]
@@ -179,6 +183,7 @@ module.exports = (api, config) => {
     edit: async (id, edits) => {
       const akified = await akify(edits, { id })
 
+      console.log(akified)
       const original = (await api.get(`event/${id}`)).body
 
       const fields = Object.keys(akified).filter(key => key.startsWith('field'))
@@ -194,6 +199,7 @@ module.exports = (api, config) => {
       })
 
       const result = await api.put(`event/${id}`).send(akified)
+
       return result.body
     },
     delete: async id => {
