@@ -83,7 +83,7 @@ const configureAkify = (api, config) => async osdi => {
     directions: osdi.instructions,
     county: 'United States',
     zip: osdi.location ? osdi.location.postal_code : undefined,
-    is_approved: osdi.status == 'confirmed',
+    is_approved: osdi.status ? osdi.status == 'confirmed' : undefined,
     title: osdi.title,
     status: {
       confirmed: 'active',
