@@ -1,0 +1,213 @@
+const moment = require('moment-timezone')
+
+const filterUndefined = obj => {
+  return Object.keys(obj).reduce((acc, key) => {
+    if (obj[key] !== undefined) {
+      const addition = {}
+      addition[key] = obj[key]
+      return Object.assign(acc, addition)
+    } else {
+      return acc
+    }
+  }, {})
+}
+
+const putDefault = val => (val == '' ? 'default' : val)
+
+const firstHaving = (list, attr) =>
+  (match => (match ? match[attr] : undefined))(list.filter(el => el[attr])[0])
+
+const configureOsdify = (api, config) => async (bsd, cons) => {
+  const creator = cons || (await api.getConstituentById(bsd.creator_cons_id))
+
+  let metadata = {}
+  try {
+    metadata = JSON.parse(bsd.venue_addr2)
+  } catch (ex) {
+    // nothing
+  }
+
+  return {
+    id: bsd.event_id,
+    identifiers: [`bsd:${bsd.event_id}`],
+    location: {
+      venue: bsd.venue_name,
+      address_lines: [bsd.venue_addr1, ''],
+      locality: bsd.venue_city,
+      region: bsd.venue_state,
+      postal_code: bsd.venue_zip,
+      location: [bsd.latitude, bsd.longitude]
+    },
+
+    browser_url:
+      config.browser_url_base +
+      `${bsd.event_type_name.replace(/ /g, '').toLowerCase()}/${
+        bsd.event_id_obfuscated
+      }`,
+
+    name: bsd.name ? bsd.name.toLowerCase().replace(/ /g, '-') : undefined,
+    title: bsd.name,
+    start_date: moment(bsd.start_dt).toISOString(),
+    end_date: moment(bsd.start_dt)
+      .add(bsd.duration, 'minutes')
+      .toISOString(),
+
+    description: bsd.description,
+    instructions: bsd.venue_directions,
+    organizer_id: bsd.creator_cons_id,
+    status: metadata.s || 'confirmed',
+    type: bsd.event_type_name,
+    tags: metadata.t || [],
+    contact: {
+      email_address: firstHaving(creator.cons_email, 'email'),
+      phone_number: firstHaving(creator.cons_phone, 'phone'),
+      name: `${creator.firstname} ${creator.lastname}`
+    }
+  }
+}
+
+const configureBsdify = (api, config) => async (osdi, existing) => {
+  const getCreatorId = async () => {
+    const creator_constituent = await api.getConstituentByEmail(
+      osdi.contact.email_address
+    )
+    return creator_constituent.id
+  }
+
+  const raw = await api.getEventTypes()
+
+  const eventTypes = raw.reduce(
+    (acc, type) => Object.assign(acc, { [type.name]: type.event_type_id }),
+    {}
+  )
+
+  let metadata = {}
+  try {
+    metadata = JSON.parse(bsd.venue_addr2)
+  } catch (ex) {
+    // nothing
+  }
+
+  if (osdi.tags) metadata.t = osdi.tags
+  if (osdi.status) metadata.s = osdi.status
+
+  const base = {
+    name: osdi.title,
+    event_type_id: eventTypes[osdi.type],
+    description: osdi.description,
+    creator_cons_id:
+      osdi.contact && osdi.contact.email_address
+        ? await getCreatorId()
+        : undefined,
+
+    contact_phone:
+      osdi.contact && osdi.contact.phone_number
+        ? osdi.contact.phone_number
+        : undefined,
+
+    start_datetime_system: osdi.start_date
+      ? moment.tz(osdi.start_date).format('YYYY-MM-DD HH:mm:ss')
+      : undefined,
+
+    duration: osdi.end_date
+      ? moment
+          .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
+          .asMinutes()
+      : undefined,
+
+    venue_name: osdi.location ? osdi.location.venue : undefined,
+    venue_directions: osdi.instructions,
+    venue_addr1:
+      osdi.location && osdi.location.address_lines
+        ? osdi.location.address_lines[0]
+        : undefined,
+
+    venue_addr2:
+      osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
+
+    venue_zip: osdi.location ? osdi.location.postal_code : undefined,
+    venue_city: osdi.location ? osdi.location.locality : undefined,
+    venue_state_cd: osdi.location ? osdi.location.region : undefined,
+    host_addr_addressee: putDefault(existing.host_addr_addressee),
+    host_addr_addr1: putDefault(existing.host_addr_addr1),
+    host_addr_zip: putDefault(existing.host_addr_zip),
+    host_addr_city: putDefault(existing.host_addr_city),
+    host_addr_state_cd: putDefault(existing.host_addr_state_cd),
+    is_searchable: osdi.status == 'confirmed' ? '1' : '0',
+    attendee_require_phone: '1'
+  }
+
+  const copy = Object.assign({}, existing)
+  Object.keys(base).forEach(attr => {
+    if (base[attr] !== undefined) {
+      copy[attr] = base[attr]
+    }
+  })
+  return copy
+}
+
+module.exports = (api, config) => {
+  const osdiify = configureOsdify(api, config)
+  const bsdify = configureBsdify(api, config)
+
+  return {
+    count: async () => {
+      const bsdEvents = await api.searchEvents({
+        date_start: '2000-01-01 00:00:00'
+      })
+
+      return bsdEvents.length
+    },
+    findAll: async params => {
+      if (params.page > 0) {
+        return []
+      }
+
+      // Fetch all events
+      const events = await api.searchEvents({
+        date_start: '2000-01-01 00:00:00'
+      })
+
+      // Fetch and map all hosts
+      const creators = events.map(e => e.creator_cons_id)
+      const creatorCons = await api.getConstituentsByIds(creators)
+
+      const byId = {}
+      creatorCons.forEach(c => {
+        byId[c.id] = c
+      })
+
+      return await Promise.all(
+        events.map(e => osdiify(e, byId[e.creator_cons_id]))
+      )
+    },
+    one: async id => {
+      const matches = await api.searchEvents({
+        event_id: id,
+        date_start: '2000-01-01 00:00:00'
+      })
+
+      return await osdiify(matches[0])
+    },
+    create: async object => {
+      const ready = await bsdify(object)
+      const result = await api.createEvent(ready)
+      return await osdiify(result)
+    },
+    edit: async (id, edits) => {
+      const matches = await api.searchEvents({
+        event_id: id,
+        date_start: '2000-01-01 00:00:00'
+      })
+
+      const existing = matches[0]
+      const bsdified = await bsdify(edits, existing)
+      const result = await api.updateEvent(bsdified)
+      return result
+    },
+    delete: async id => {
+      process.exit()
+      // return await api.put(`delete/${id}`)
+    }
+  }
+}

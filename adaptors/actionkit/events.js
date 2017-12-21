@@ -20,6 +20,7 @@ const setEventField = async (api, ak, name, value) => {
 
 const configureOsdify = (api, config) => async ak => {
   return {
+    id: ak.id,
     identifiers: [`actionkit:${ak.id}`],
     location: {
       venue: ak.venue,
@@ -180,7 +181,6 @@ module.exports = (api, config) => {
     edit: async (id, edits) => {
       const akified = await akify(edits, { id })
 
-      console.log(akified)
       const original = (await api.get(`event/${id}`)).body
 
       const fields = Object.keys(akified).filter(key => key.startsWith('field'))

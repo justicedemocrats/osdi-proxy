@@ -5,8 +5,8 @@ const app = express()
 const http = require('http')
 const log = require('debug')('osdi-proxy:')
 // const osdi = require('./generator')
-const actionkit = require('./adaptors/actionkit')
 const simpleApp = require('./simple-app')
+const config = require('./config')
 const secret = require('./secret')
 
 /*
@@ -15,36 +15,24 @@ const secret = require('./secret')
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 
-/* TODO - actually make osdi - ey
-osdi.initialize(config)
-
-app.get('/', (req, res) => {
-  res.json(osdi.aep())
-})
-
-const apps = osdi.generate(config.resources)
-for (let r in apps) {
-  app.use('/' + r, apps[r])
-}
-*/
-
-const config = {
-  base: process.env.AK_BASE,
-  username: process.env.AK_USERNAME,
-  password: process.env.AK_PASSWORD,
-  eventUrlBase: 'https://go.justicedemocrats.com/event/event',
-  defaultCampaign: process.env.AK_DEFAULT_CAMPAIGN
-}
-
+/*
+ * Require a simple single api key secret
+ */
 app.use(secret)
-app.use('/ak', simpleApp(actionkit(config)))
 
-app.use((req, res) => {
-  /* TODO: Process 404 */
-  log('404!')
-  res.status(404).send('404')
-})
+log('Running with crm %s', config.route)
 
+/*
+ * Attach the app specified by environment variables
+ */
+app.use(config.route, simpleApp(config.crud(config)))
+
+// And 404s just in case
+app.use((req, res) => res.status(404).send('404'))
+
+/*
+ * Get it started
+ */
 const PORT = process.env.PORT || 3000
 const server = http.createServer(app)
 
