@@ -9,15 +9,48 @@ const bsd = require('./adaptors/bsd')(config)
 
 const main = async () => {
   try {
-    // const result = await bsd.events.edit('44366', {status: 'cancelled'})
-    // const result = await bsd.events.edit('44368', {tags: ['hello']})
-    // console.log(result)
+    const tester = {
+      id: '44369',
+      identifiers: ['bsd:44369'],
+      location: {
+        venue: 'My school',
+        address_lines: ['4141 Spring Valley Rd', '{"t":[],"s":"confirmed"}'],
+        locality: 'Addison',
+        region: 'TX',
+        postal_code: '75001',
+        location: ['32.982201', '-96.835800']
+      },
+      browser_url: 'https://google.com/phonebank/45lt',
+      name: 'ben-packer-test-event',
+      title: 'Ben Packer Test Event',
+      start_date: '2017-12-23T08:04:30.000Z',
+      end_date: '2017-12-23T10:04:30.000Z',
+      description: 'Ben Packer, test event. To be deleted.',
+      instructions: 'come here',
+      organizer_id: '970467',
+      status: undefined,
+      type: 'Phonebank',
+      tags: [],
+      contact: {
+        email_address: 'dookie@gmail.com',
+        phone_number: '2147010869',
+        name: 'Ben Packer'
+      }
+    }
 
-    // console.log(await bsd.events.one('44368'))
+    // const result = await bsd.events.edit('44366', { status: 'rejected' })
+    // const result = await bsd.events.edit('44369', {tags: ['hello']})
+
+    // console.log(await bsd.events.one('44369'))
 
     // console.log(await bsd.events.findAll())
     // console.log(await bsd.attendances.findAll({event: '142'}))
-    await bsd.events.findAll()
+    const events = await bsd.events.findAll()
+    events.forEach(e => {
+      if (e.id == '44369') {
+        console.log(e)
+      }
+    })
     // console.log(await bsd.people.one('158453'))
 
     // let allEvents = await ak.events.findAll()

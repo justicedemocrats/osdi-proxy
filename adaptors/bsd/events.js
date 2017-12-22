@@ -1,4 +1,21 @@
 const moment = require('moment-timezone')
+const fetchAllEvents = require('./fetch-all-events')
+
+const inferStatus = bsd => {
+  if (bsd.flag_approval == '1') {
+    if (bsd.is_searchable == '1') {
+      return 'tentative'
+    } else {
+      return 'rejected'
+    }
+  }
+
+  if (bsd.is_searchable == '1') {
+    return 'confirmed'
+  } else {
+    return 'cancelled'
+  }
+}
 
 const filterUndefined = obj => {
   return Object.keys(obj).reduce((acc, key) => {
@@ -21,8 +38,9 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
   const creator = cons || (await api.getConstituentById(bsd.creator_cons_id))
 
   let metadata = {}
+  console.log(bsd.attendee_volunteer_message)
   try {
-    metadata = JSON.parse(bsd.venue_addr2)
+    metadata = JSON.parse(bsd.attendee_volunteer_message) || {}
   } catch (ex) {
     // nothing
   }
@@ -32,9 +50,9 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     identifiers: [`bsd:${bsd.event_id}`],
     location: {
       venue: bsd.venue_name,
-      address_lines: [bsd.venue_addr1, ''],
+      address_lines: [bsd.venue_addr1, bsd.venue_addr2],
       locality: bsd.venue_city,
-      region: bsd.venue_state,
+      region: bsd.venue_state_cd,
       postal_code: bsd.venue_zip,
       location: [bsd.latitude, bsd.longitude]
     },
@@ -55,7 +73,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     description: bsd.description,
     instructions: bsd.venue_directions,
     organizer_id: bsd.creator_cons_id,
-    status: metadata.s || 'confirmed',
+    status: metadata.s || inferStatus(bsd),
     type: bsd.event_type_name,
     tags: metadata.t || [],
     contact: {
@@ -102,7 +120,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
 
   let metadata = {}
   try {
-    metadata = JSON.parse(bsd.venue_addr2)
+    metadata = JSON.parse(bsd.attendee_volunteer_message)
   } catch (ex) {
     // nothing
   }
@@ -111,6 +129,8 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   if (osdi.status) metadata.s = osdi.status
 
   const base = {
+    attendee_volunteer_message:
+      osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
     name: osdi.title,
     event_type_id: eventTypes[osdi.type],
     description: osdi.description,
@@ -118,41 +138,45 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
       osdi.contact && osdi.contact.email_address
         ? await getCreatorId()
         : undefined,
-
     contact_phone:
       osdi.contact && osdi.contact.phone_number
         ? osdi.contact.phone_number
         : undefined,
-
     start_datetime_system: osdi.start_date
       ? moment.tz(osdi.start_date).format('YYYY-MM-DD HH:mm:ss')
       : undefined,
-
     duration: osdi.end_date
       ? moment
           .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
           .asMinutes()
       : undefined,
-
     venue_name: osdi.location ? osdi.location.venue : undefined,
     venue_directions: osdi.instructions,
     venue_addr1:
       osdi.location && osdi.location.address_lines
         ? osdi.location.address_lines[0]
         : undefined,
-
     venue_addr2:
-      osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
-
+      osdi.location && osdi.location.address_lines
+        ? osdi.location.address_lines[1]
+        : undefined,
     venue_zip: osdi.location ? osdi.location.postal_code : undefined,
     venue_city: osdi.location ? osdi.location.locality : undefined,
     venue_state_cd: osdi.location ? osdi.location.region : undefined,
-    host_addr_addressee: existing ? putDefault(existing.host_addr_addressee) : undefined,
-    host_addr_addr1: existing ? putDefault(existing.host_addr_addr1) : undefined,
+    host_addr_addressee: existing
+      ? putDefault(existing.host_addr_addressee)
+      : undefined,
+    host_addr_addr1: existing
+      ? putDefault(existing.host_addr_addr1)
+      : undefined,
     host_addr_zip: existing ? putDefault(existing.host_addr_zip) : undefined,
     host_addr_city: existing ? putDefault(existing.host_addr_city) : undefined,
-    host_addr_state_cd: existing ? putDefault(existing.host_addr_state_cd) : undefined,
-    is_searchable: osdi.status == 'confirmed' ? '1' : '0',
+    host_addr_state_cd: existing
+      ? putDefault(existing.host_addr_state_cd)
+      : undefined,
+    flag_approval:
+      osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0',
+    is_searchable: osdi.status == 'cancelled' ? '0' : '1',
     attendee_require_phone: '1'
   }
 
@@ -183,9 +207,7 @@ module.exports = (api, config) => {
       }
 
       // Fetch all events
-      const events = await api.searchEvents({
-        date_start: '2000-01-01 00:00:00'
-      })
+      const events = await fetchAllEvents(api)
 
       // Fetch and map all hosts
       const creators = events.map(e => e.creator_cons_id)
@@ -222,6 +244,7 @@ module.exports = (api, config) => {
       const existing = matches[0]
       const bsdified = await bsdify(edits, existing)
       const result = await api.updateEvent(bsdified)
+      console.log(result)
       return result
     },
     delete: async id => {

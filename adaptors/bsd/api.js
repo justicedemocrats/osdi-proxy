@@ -663,6 +663,7 @@ class BSD {
 
   apiInputsFromEvent(event) {
     let apiKeys = [
+      'note',
       'event_id',
       'event_id_obfuscated',
       'event_type_id',
