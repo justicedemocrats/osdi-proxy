@@ -1,3 +1,5 @@
+const cacher = require('../lib').cacher('ak-attendance')
+
 const osdiify = async (api, ak) => {
   return {
     attended: ak.attended,
