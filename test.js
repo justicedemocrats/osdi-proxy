@@ -9,48 +9,45 @@ const bsd = require('./adaptors/bsd')(config)
 
 const main = async () => {
   try {
-    const tester = {
-      id: '44369',
-      identifiers: ['bsd:44369'],
-      location: {
-        venue: 'My school',
-        address_lines: ['4141 Spring Valley Rd', '{"t":[],"s":"confirmed"}'],
-        locality: 'Addison',
-        region: 'TX',
-        postal_code: '75001',
-        location: ['32.982201', '-96.835800']
-      },
-      browser_url: 'https://google.com/phonebank/45lt',
-      name: 'ben-packer-test-event',
-      title: 'Ben Packer Test Event',
-      start_date: '2017-12-23T08:04:30.000Z',
-      end_date: '2017-12-23T10:04:30.000Z',
-      description: 'Ben Packer, test event. To be deleted.',
-      instructions: 'come here',
-      organizer_id: '970467',
-      status: undefined,
-      type: 'Phonebank',
-      tags: [],
-      contact: {
-        email_address: 'dookie@gmail.com',
-        phone_number: '2147010869',
-        name: 'Ben Packer'
-      }
-    }
+    // const tester = {
+    //   id: '474',
+    //   identifiers: ['bsd:474'],
+    //   location: {
+    //     venue: 'My school',
+    //     address_lines: ['4141 Spring Valley Rd', ''],
+    //     locality: 'Addison',
+    //     region: 'TX',
+    //     postal_code: '75001'
+    //   },
+    //   title: 'Ben Packer Test Event',
+    //   start_date: '2017-01-03T04:00:00.000Z',
+    //   end_date: '2017-01-03T06:00:00.000Z',
+    //   description:
+    //     'Ben Packer, test event. To be deleted.',
+    //   instructions: 'come here',
+    //   status: 'confirmed',
+    //   type: 'Volunteer event',
+    //   tags: [],
+    //   contact: {
+    //     email_address: 'dookie@gmail.com',
+    //     phone_number: '2147010869',
+    //     name: 'Ben Packer'
+    //   }
+    // }
 
-    // const result = await bsd.events.edit('44366', { status: 'rejected' })
-    // const result = await bsd.events.edit('44369', {tags: ['hello']})
+    // const result = await bsd.events.create(tester)
+    const result = await bsd.events.edit('510', {status: 'tentative'})
+    // const result = await bsd.events.edit('44368', {tags: ['hello']})
+    console.log(result)
 
     // console.log(await bsd.events.one('44369'))
 
     // console.log(await bsd.events.findAll())
     // console.log(await bsd.attendances.findAll({event: '142'}))
     const events = await bsd.events.findAll()
-    events.forEach(e => {
-      if (e.id == '44369') {
-        console.log(e)
-      }
-    })
+    console.log(events.filter(e => e.description.includes('Ben Packer')))
+    // console.log(events[0])
+    // console.log(new Set(events.map(e => e.flag_approval)))
     // console.log(await bsd.people.one('158453'))
 
     // let allEvents = await ak.events.findAll()
