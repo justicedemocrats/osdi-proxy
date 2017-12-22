@@ -1,6 +1,6 @@
 const moment = require('moment')
 const format = 'YYYY-MM-DDTHH:mm:ss'
-const cacher = require('../lib').cacher('ak-event')
+const cacher = require('../../lib').cacher('ak-event')
 
 module.exports = (api, config) => {
   const osdiify = configureOsdify(api, config)
@@ -15,35 +15,30 @@ module.exports = (api, config) => {
       const page = (params && params.page) || 0
       const reference = `all-${page}`
 
-      const cached = await cacher.get(reference)
-      const fresh_promise = (async () => {
-        const result = await api
-          .get('event')
-          .query({ _offset: page * 100, _limit: 100 })
+      return await cacher.fetch_and_update(
+        reference,
+        (async () => {
+          const result = await api
+            .get('event')
+            .query({ _offset: page * 100, _limit: 100 })
 
-        const { objects } = result.body
+          const { objects } = result.body
 
-        const final = await Promise.all(objects.map(osdiify))
-        // Update for next pull
-        cacher.set(reference, final)
-        return final
-      })()
-
-      return cached || (await fresh_promise)
+          const final = await Promise.all(objects.map(osdiify))
+          return final
+        })()
+      )
     },
     one: async id => {
       const reference = id
-
-      const cached = await cacher.get(reference)
-      const fresh_promise = async () => {
-        const result = await api.get(`event/${id}`)
-        const final = await osdiify(result.body)
-        // Update for next pull
-        cacher.set(reference, final)
-        return final
-      }
-
-      return cached || (await fresh_promise)
+      return await cacher.fetch_and_update(
+        reference,
+        (async () => {
+          const result = await api.get(`event/${id}`)
+          const final = await osdiify(result.body)
+          return final
+        })()
+      )
     },
     create: async object => {
       object.organizer_id = await ensureUser(api, object.contact.email_address)
@@ -73,9 +68,7 @@ module.exports = (api, config) => {
     },
     edit: async (id, edits) => {
       const akified = await akify(edits, { id })
-
       const original = (await api.get(`event/${id}`)).body
-
       const fields = Object.keys(akified).filter(key => key.startsWith('field'))
 
       await Promise.all(
@@ -89,6 +82,7 @@ module.exports = (api, config) => {
       })
 
       const result = await api.put(`event/${id}`).send(akified)
+      cacher.invalidate(id)
 
       return result.body
     },
