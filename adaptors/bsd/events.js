@@ -71,6 +71,25 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
     const creator_constituent = await api.getConstituentByEmail(
       osdi.contact.email_address
     )
+
+    if (!creator_constituent) {
+      const to_create = {
+        cons_email: {
+          email: osdi.contact.email_address,
+          is_subscribed: 1,
+          is_primary: 1
+        },
+        cons_phone: {
+          phone: osdi.contact.phone_number,
+          is_primary: 1
+        },
+        firstname: osdi.contact.name.split(' ')[0],
+        lastname: osdi.contact.name.split(' ')[1]
+      }
+
+      return (await api.setConstituentData(to_create)).id
+    }
+
     return creator_constituent.id
   }
 
@@ -128,11 +147,11 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
     venue_zip: osdi.location ? osdi.location.postal_code : undefined,
     venue_city: osdi.location ? osdi.location.locality : undefined,
     venue_state_cd: osdi.location ? osdi.location.region : undefined,
-    host_addr_addressee: putDefault(existing.host_addr_addressee),
-    host_addr_addr1: putDefault(existing.host_addr_addr1),
-    host_addr_zip: putDefault(existing.host_addr_zip),
-    host_addr_city: putDefault(existing.host_addr_city),
-    host_addr_state_cd: putDefault(existing.host_addr_state_cd),
+    host_addr_addressee: existing ? putDefault(existing.host_addr_addressee) : undefined,
+    host_addr_addr1: existing ? putDefault(existing.host_addr_addr1) : undefined,
+    host_addr_zip: existing ? putDefault(existing.host_addr_zip) : undefined,
+    host_addr_city: existing ? putDefault(existing.host_addr_city) : undefined,
+    host_addr_state_cd: existing ? putDefault(existing.host_addr_state_cd) : undefined,
     is_searchable: osdi.status == 'confirmed' ? '1' : '0',
     attendee_require_phone: '1'
   }
@@ -159,7 +178,7 @@ module.exports = (api, config) => {
       return bsdEvents.length
     },
     findAll: async params => {
-      if (params.page > 0) {
+      if (params && params.page > 0) {
         return []
       }
 
@@ -192,7 +211,7 @@ module.exports = (api, config) => {
     create: async object => {
       const ready = await bsdify(object)
       const result = await api.createEvent(ready)
-      return await osdiify(result)
+      return result
     },
     edit: async (id, edits) => {
       const matches = await api.searchEvents({
