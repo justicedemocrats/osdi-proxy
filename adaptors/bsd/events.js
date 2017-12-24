@@ -38,7 +38,6 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
   const creator = cons || (await api.getConstituentById(bsd.creator_cons_id))
 
   let metadata = {}
-  console.log(bsd.attendee_volunteer_message)
   try {
     metadata = JSON.parse(bsd.attendee_volunteer_message) || {}
   } catch (ex) {
@@ -114,7 +113,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   const raw = await api.getEventTypes()
 
   const eventTypes = raw.reduce(
-    (acc, type) => Object.assign(acc, { [type.name]: type.event_type_id }),
+    (acc, type) => Object.assign(acc, { [transformEventType(type.name)]: type.event_type_id }),
     {}
   )
 
@@ -128,7 +127,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   if (osdi.tags) metadata.t = osdi.tags
   if (osdi.status) metadata.s = osdi.status
 
-  if (eventTypes[osdi.type]) {
+  if (!eventTypes[transformEventType(osdi.type)]) {
     throw new Error(`Unknown event type – try one of ${Object.keys(eventTypes).join(', ')}`)
   }
 
@@ -136,7 +135,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
     name: osdi.title,
-    event_type_id: eventTypes[osdi.type],
+    event_type_id: eventTypes[transformEventType(osdi.type)],
     description: osdi.description,
     creator_cons_id:
       osdi.contact && osdi.contact.email_address
@@ -248,7 +247,6 @@ module.exports = (api, config) => {
       const existing = matches[0]
       const bsdified = await bsdify(edits, existing)
       const result = await api.updateEvent(bsdified)
-      console.log(result)
       return result
     },
     delete: async id => {
@@ -256,4 +254,8 @@ module.exports = (api, config) => {
       // return await api.put(`delete/${id}`)
     }
   }
+}
+
+function transformEventType(type) {
+  return type.replace(/ /g, '').toLowerCase()
 }
