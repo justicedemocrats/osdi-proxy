@@ -36,6 +36,7 @@ const main = async () => {
     }
 
     const result = await bsd.events.create(tester)
+    console.log(result)
     // const result = await bsd.events.edit('44356', {
     //   start_date: '2017-01-03T04:00:00.000',
     //   end_date: '2017-01-03T06:00:00.000'
