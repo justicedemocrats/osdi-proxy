@@ -127,7 +127,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   if (osdi.tags) metadata.t = osdi.tags
   if (osdi.status) metadata.s = osdi.status
 
-  if (!eventTypes[transformEventType(osdi.type)]) {
+  if (osdi.type && !eventTypes[transformEventType(osdi.type)]) {
     throw new Error(`Unknown event type – try one of ${Object.keys(eventTypes).join(', ')}`)
   }
 
@@ -135,7 +135,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
     name: osdi.title,
-    event_type_id: eventTypes[transformEventType(osdi.type)],
+    event_type_id: osdi.type ? eventTypes[transformEventType(osdi.type)] : undefined,
     description: osdi.description,
     creator_cons_id:
       osdi.contact && osdi.contact.email_address
@@ -146,7 +146,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
         ? osdi.contact.phone_number
         : undefined,
     start_datetime_system: osdi.start_date
-      ? moment.tz(osdi.start_date).format('YYYY-MM-DD HH:mm:ss')
+      ? moment(osdi.start_date).format('YYYY-MM-DD HH:mm:ss')
       : undefined,
     duration: osdi.end_date
       ? moment
@@ -236,7 +236,9 @@ module.exports = (api, config) => {
     create: async object => {
       const ready = await bsdify(object)
       const result = await api.createEvent(ready)
-      return result
+      const all_events = await fetchAllEvents(api)
+      const created = all_events.filter(e => e.event_id_obfuscated == result.event_id_obfuscated)[0]
+      return await osdiify(created)
     },
     edit: async (id, edits) => {
       const matches = await api.searchEvents({
