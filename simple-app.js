@@ -9,7 +9,7 @@ module.exports = client => {
       .then(events => {
         res.json(events)
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   app.get('/events/:id', (req, res) => {
@@ -18,7 +18,7 @@ module.exports = client => {
       .then(event => {
         res.json(event)
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   app.post('/events', (req, res) => {
@@ -27,7 +27,7 @@ module.exports = client => {
       .then(result => {
         res.json(result)
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   app.post('/events/:id', (req, res) => {
@@ -36,7 +36,7 @@ module.exports = client => {
       .then(result => {
         res.json(result)
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   app.get('/events/:id/rsvps', (req, res) => {
@@ -45,7 +45,7 @@ module.exports = client => {
       .then(attendances => {
         res.json(attendances)
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   app.get('/events/:id/rsvp-count', (req, res) => {
@@ -54,7 +54,7 @@ module.exports = client => {
       .then(count => {
         res.json({ count })
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   app.get('/people/:id', (req, res) => {
@@ -63,7 +63,7 @@ module.exports = client => {
       .then(person => {
         res.json(person)
       })
-      .catch(err => console.error(err))
+      .catch(res.status(400).json)
   })
 
   return app

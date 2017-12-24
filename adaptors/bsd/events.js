@@ -128,6 +128,10 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   if (osdi.tags) metadata.t = osdi.tags
   if (osdi.status) metadata.s = osdi.status
 
+  if (eventTypes[osdi.type]) {
+    throw new Error(`Unknown event type – try one of ${Object.keys(eventTypes).join(', ')}`)
+  }
+
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
