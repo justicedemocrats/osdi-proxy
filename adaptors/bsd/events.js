@@ -66,7 +66,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     title: bsd.name,
     start_date: moment(bsd.start_dt + 'Z').toISOString(),
 
-    end_date: moment(bsd.start_dt)
+    end_date: moment(bsd.start_dt + 'Z')
       .add(bsd.duration, 'minutes')
       .toISOString(),
 
