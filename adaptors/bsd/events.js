@@ -64,10 +64,16 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
 
     name: bsd.name ? bsd.name.toLowerCase().replace(/ /g, '-') : undefined,
     title: bsd.name,
-    start_date: moment.tz(bsd.start_dt, 'UTC').tz('America/Chicago').toISOString(),
-    end_date: moment.tz(bsd.start_dt, 'UTC')
+    start_date: moment
+      .tz(bsd.start_dt, 'UTC')
+      .tz('America/Chicago')
+      .format(),
+
+    end_date: moment
+      .tz(bsd.start_dt, 'UTC')
+      .tz('America/Chicago')
       .add(bsd.duration, 'minutes')
-      .toISOString(),
+      .format(),
 
     description: bsd.description,
     instructions: bsd.venue_directions,
@@ -113,7 +119,10 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   const raw = await api.getEventTypes()
 
   const eventTypes = raw.reduce(
-    (acc, type) => Object.assign(acc, { [transformEventType(type.name)]: type.event_type_id }),
+    (acc, type) =>
+      Object.assign(acc, {
+        [transformEventType(type.name)]: type.event_type_id
+      }),
     {}
   )
 
@@ -128,14 +137,18 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
   if (osdi.status) metadata.s = osdi.status
 
   if (osdi.type && !eventTypes[transformEventType(osdi.type)]) {
-    throw new Error(`Unknown event type – try one of ${Object.keys(eventTypes).join(', ')}`)
+    throw new Error(
+      `Unknown event type – try one of ${Object.keys(eventTypes).join(', ')}`
+    )
   }
 
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
     name: osdi.title,
-    event_type_id: osdi.type ? eventTypes[transformEventType(osdi.type)] : undefined,
+    event_type_id: osdi.type
+      ? eventTypes[transformEventType(osdi.type)]
+      : undefined,
     description: osdi.description,
     creator_cons_id:
       osdi.contact && osdi.contact.email_address
@@ -238,7 +251,9 @@ module.exports = (api, config) => {
       const ready = await bsdify(object)
       const result = await api.createEvent(ready)
       const all_events = await fetchAllEvents(api)
-      const created = all_events.filter(e => e.event_id_obfuscated == result.event_id_obfuscated)[0]
+      const created = all_events.filter(
+        e => e.event_id_obfuscated == result.event_id_obfuscated
+      )[0]
       return await osdiify(created)
     },
     edit: async (id, edits) => {
