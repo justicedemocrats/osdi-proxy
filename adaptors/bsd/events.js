@@ -64,8 +64,8 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
 
     name: bsd.name ? bsd.name.toLowerCase().replace(/ /g, '-') : undefined,
     title: bsd.name,
-    start_date: moment(bsd.start_dt).toISOString(),
-    end_date: moment(bsd.start_dt)
+    start_date: moment.tz(bsd.start_dt, 'UTC').tz('America/Chicago').toISOString(),
+    end_date: moment.tz(bsd.start_dt, 'UTC')
       .add(bsd.duration, 'minutes')
       .toISOString(),
 
@@ -163,7 +163,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
       osdi.location && osdi.location.address_lines
         ? osdi.location.address_lines[1]
         : undefined,
-    local_timezone: 'CST',
+    local_timezone: 'US/Central',
     venue_zip: osdi.location ? osdi.location.postal_code : undefined,
     venue_city: osdi.location ? osdi.location.locality : undefined,
     venue_state_cd: osdi.location ? osdi.location.region : undefined,
