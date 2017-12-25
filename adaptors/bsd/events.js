@@ -64,12 +64,9 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
 
     name: bsd.name ? bsd.name.toLowerCase().replace(/ /g, '-') : undefined,
     title: bsd.name,
-    start_date: moment
-      .tz(bsd.start_dt, 'UTC')
-      .format(),
+    start_date: moment(bsd.start_dt).format(),
 
-    end_date: moment
-      .tz(bsd.start_dt, 'UTC')
+    end_date: moment(bsd.start_dt)
       .add(bsd.duration, 'minutes')
       .format(),
 
