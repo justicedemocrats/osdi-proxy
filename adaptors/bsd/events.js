@@ -171,7 +171,6 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
       osdi.location && osdi.location.address_lines
         ? osdi.location.address_lines[1]
         : undefined,
-    local_timezone: 'US/Central',
     venue_zip: osdi.location ? osdi.location.postal_code : undefined,
     venue_city: osdi.location ? osdi.location.locality : undefined,
     venue_state_cd: osdi.location ? osdi.location.region : undefined,
