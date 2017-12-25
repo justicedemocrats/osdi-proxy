@@ -154,7 +154,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
         ? osdi.contact.phone_number
         : undefined,
     start_datetime_system: osdi.start_date
-      ? moment.tz(osdi.start_date, 'UTC').format('YYYY-MM-DD HH:mm:ss')
+      ? moment(osdi.start_date).format('YYYY-MM-DD HH:mm:ss')
       : undefined,
     duration: osdi.end_date
       ? moment
