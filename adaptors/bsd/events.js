@@ -65,11 +65,11 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     name: bsd.name ? bsd.name.toLowerCase().replace(/ /g, '-') : undefined,
     title: bsd.name,
     start_date: moment
-      .tz(bsd.start_dt, 'America/Chicago')
+      .tz(bsd.start_dt, 'UTC')
       .format(),
 
     end_date: moment
-      .tz(bsd.start_dt, 'America/Chicago')
+      .tz(bsd.start_dt, 'UTC')
       .add(bsd.duration, 'minutes')
       .format(),
 
@@ -157,7 +157,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
         ? osdi.contact.phone_number
         : undefined,
     start_datetime_system: osdi.start_date
-      ? moment(osdi.start_date).format('YYYY-MM-DD HH:mm:ss')
+      ? moment.tz(osdi.start_date, 'UTC').format('YYYY-MM-DD HH:mm:ss')
       : undefined,
     duration: osdi.end_date
       ? moment
