@@ -274,17 +274,12 @@ module.exports = (api, config) => {
       )
     },
     one: async id => {
-      return await cacher.fetch_and_update(
-        id,
-        (async () => {
-          const matches = await api.searchEvents({
-            event_id: id,
-            date_start: '2000-01-01 00:00:00'
-          })
+      const matches = await api.searchEvents({
+        event_id: id,
+        date_start: '2000-01-01 00:00:00'
+      })
 
-          return await osdiify(matches[0])
-        })()
-      )
+      return await osdiify(matches[0])
     },
     create: async object => {
       const ready = await bsdify(object)
@@ -304,7 +299,6 @@ module.exports = (api, config) => {
       const existing = matches[0]
       const bsdified = await bsdify(edits, existing)
       const result = await api.updateEvent(bsdified)
-      cacher.invalidate(id)
       return result
     },
     delete: async id => {

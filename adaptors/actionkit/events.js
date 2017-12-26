@@ -30,15 +30,9 @@ module.exports = (api, config) => {
       )
     },
     one: async id => {
-      const reference = id
-      return await cacher.fetch_and_update(
-        reference,
-        (async () => {
-          const result = await api.get(`event/${id}`)
-          const final = await osdiify(result.body)
-          return final
-        })()
-      )
+      const result = await api.get(`event/${id}`)
+      const final = await osdiify(result.body)
+      return final
     },
     create: async object => {
       object.organizer_id = await ensureUser(api, object.contact.email_address)
@@ -82,7 +76,6 @@ module.exports = (api, config) => {
       })
 
       const result = await api.put(`event/${id}`).send(akified)
-      cacher.invalidate(id)
 
       return result.body
     },
