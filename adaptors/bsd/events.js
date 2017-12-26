@@ -146,7 +146,7 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       return (await api.setConstituentData(to_create)).id
     } else {
       api.setConstituentData({
-        cons_id: creator_constituent.id
+        cons_id: creator_constituent.id,
         cons_phone: {
           phone: osdi.contact.phone_number,
           is_primary: 1
