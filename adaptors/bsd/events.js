@@ -14,7 +14,7 @@ const to_standard_time_zone = {
 }
 
 const to_bsd_time_zone = {}
-Object.keys(to_bsd_time_zone).forEach(key => {
+Object.keys(to_standard_time_zone).forEach(key => {
   to_bsd_time_zone[to_standard_time_zone[key]] = key
 })
 
@@ -162,6 +162,15 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
     )
   }
 
+  const time_zone =
+    to_bsd_time_zone[
+      zipcode_to_timezone.lookup(
+        (osdi.location && osdi.location.postal_code) || existing.venue_zip
+      )
+    ]
+
+  console.log(osdi.start_date)
+
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
@@ -179,9 +188,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
         ? osdi.contact.phone_number
         : undefined,
     start_datetime_system: osdi.start_date
-      ? moment
-          .tz(osdi.start_date, 'America/Chicago')
-          .format('YYYY-MM-DD HH:mm:ss')
+      ? moment.tz(osdi.start_date, time_zone).format('YYYY-MM-DD HH:mm:ss')
       : undefined,
     duration:
       osdi.end_date && osdi.start_date
@@ -189,12 +196,7 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
             .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
             .asMinutes()
         : undefined,
-    local_timezone:
-      to_bsd_time_zone[
-        zipcode_to_timezone.lookup(
-          (osdi.location && osdi.location.postal_code) || existing.venue_zip
-        )
-      ],
+    local_timezone: time_zone,
     venue_name: osdi.location ? osdi.location.venue : undefined,
     venue_directions: osdi.instructions,
     venue_addr1:
