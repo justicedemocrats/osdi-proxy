@@ -1,6 +1,7 @@
 const moment = require('moment-timezone')
 const fetchAllEvents = require('./fetch-all-events')
 const zipcode_to_timezone = require('zipcode-to-timezone')
+const cacher = require('../../lib').cacher('bsd-event')
 
 const to_standard_time_zone = {
   'US/Atlantic': 'America/Puerto_Rico',
@@ -251,29 +252,39 @@ module.exports = (api, config) => {
         return []
       }
 
-      // Fetch all events
-      const events = await fetchAllEvents(api)
+      return await cacher.fetch_and_update(
+        'all',
+        (async () => {
+          // Fetch all events
+          const events = await fetchAllEvents(api)
 
-      // Fetch and map all hosts
-      const creators = events.map(e => e.creator_cons_id)
-      const creatorCons = await api.getConstituentsByIds(creators)
+          // Fetch and map all hosts
+          const creators = events.map(e => e.creator_cons_id)
+          const creatorCons = await api.getConstituentsByIds(creators)
 
-      const byId = {}
-      creatorCons.forEach(c => {
-        byId[c.id] = c
-      })
+          const byId = {}
+          creatorCons.forEach(c => {
+            byId[c.id] = c
+          })
 
-      return await Promise.all(
-        events.map(e => osdiify(e, byId[e.creator_cons_id]))
+          return await Promise.all(
+            events.map(e => osdiify(e, byId[e.creator_cons_id]))
+          )
+        })()
       )
     },
     one: async id => {
-      const matches = await api.searchEvents({
-        event_id: id,
-        date_start: '2000-01-01 00:00:00'
-      })
+      return await cacher.fetch_and_update(
+        id,
+        (async () => {
+          const matches = await api.searchEvents({
+            event_id: id,
+            date_start: '2000-01-01 00:00:00'
+          })
 
-      return await osdiify(matches[0])
+          return await osdiify(matches[0])
+        })()
+      )
     },
     create: async object => {
       const ready = await bsdify(object)
@@ -293,6 +304,7 @@ module.exports = (api, config) => {
       const existing = matches[0]
       const bsdified = await bsdify(edits, existing)
       const result = await api.updateEvent(bsdified)
+      cacher.invalidate(id)
       return result
     },
     delete: async id => {
