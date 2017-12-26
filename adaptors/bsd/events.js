@@ -1,5 +1,22 @@
 const moment = require('moment-timezone')
 const fetchAllEvents = require('./fetch-all-events')
+const zipcode_to_timezone = require('zipcode-to-timezone')
+
+const to_standard_time_zone = {
+  'US/Atlantic': 'America/Puerto_Rico',
+  'US/Eastern': 'America/New_York',
+  'US/Central': 'America/Chicago',
+  'US/Mountain': 'America/Denver',
+  'US/MST': 'America/Phoenix',
+  'US/Pacific': 'America/Los_Angeles',
+  'US/Alaska': 'America/Anchorage',
+  'Pacific/Honolulu': 'America/Honolulu'
+}
+
+const to_bsd_time_zone = {}
+Object.keys(to_bsd_time_zone).forEach(key => {
+  to_bsd_time_zone[to_standard_time_zone[key]] = key
+})
 
 const inferStatus = bsd => {
   if (bsd.flag_approval == '1') {
@@ -44,6 +61,13 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     // nothing
   }
 
+  const time_zone =
+    bsd.start_tz && to_standard_time_zone[bsd.start_tz]
+      ? to_standard_time_zone[bsd.start_tz]
+      : zipcode_to_timezone.lookup(bsd.venue_zip)
+
+  const adjusted_start = moment(bsd.start_dt + 'Z').tz(time_zone)
+
   return {
     id: bsd.event_id,
     identifiers: [`bsd:${bsd.event_id}`],
@@ -53,7 +77,8 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
       locality: bsd.venue_city,
       region: bsd.venue_state_cd,
       postal_code: bsd.venue_zip,
-      location: [bsd.latitude, bsd.longitude]
+      location: [bsd.latitude, bsd.longitude],
+      time_zone: time_zone
     },
 
     browser_url:
@@ -64,9 +89,9 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
 
     name: bsd.name ? bsd.name.toLowerCase().replace(/ /g, '-') : undefined,
     title: bsd.name,
-    start_date: moment(bsd.start_dt + 'Z').toISOString(),
 
-    end_date: moment(bsd.start_dt + 'Z')
+    start_date: adjusted_start.toISOString(),
+    end_date: moment(adjusted_start)
       .add(bsd.duration, 'minutes')
       .toISOString(),
 
@@ -154,13 +179,22 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
         ? osdi.contact.phone_number
         : undefined,
     start_datetime_system: osdi.start_date
-      ? moment.tz(osdi.start_date, 'America/Chicago').format('YYYY-MM-DD HH:mm:ss')
-      : undefined,
-    duration: (osdi.end_date && osdi.start_date)
       ? moment
-          .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
-          .asMinutes()
+          .tz(osdi.start_date, 'America/Chicago')
+          .format('YYYY-MM-DD HH:mm:ss')
       : undefined,
+    duration:
+      osdi.end_date && osdi.start_date
+        ? moment
+            .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
+            .asMinutes()
+        : undefined,
+    local_timezone:
+      to_bsd_time_zone[
+        zipcode_to_timezone.lookup(
+          (osdi.location && osdi.location.postal_code) || existing.venue_zip
+        )
+      ],
     venue_name: osdi.location ? osdi.location.venue : undefined,
     venue_directions: osdi.instructions,
     venue_addr1:

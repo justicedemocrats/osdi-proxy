@@ -37,6 +37,7 @@
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "superagent": "^3.8.2",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "zipcode-to-timezone": "0.0.9"
   }
 }
