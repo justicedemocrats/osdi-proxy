@@ -290,7 +290,7 @@ module.exports = (api, config) => {
     },
     create: async object => {
       if (isInPast(object)) {
-        return throw new Error('Event is in past')
+        throw new Error('Event is in past')
       }
 
       const ready = await bsdify(object, null, true)
