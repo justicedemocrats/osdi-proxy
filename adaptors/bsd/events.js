@@ -3,6 +3,12 @@ const fetchAllEvents = require('./fetch-all-events')
 const zipcode_to_timezone = require('zipcode-to-timezone')
 const cacher = require('../../lib').cacher('bsd-event')
 
+const isInPast = ev => {
+  const match_date = ev.end_date || ev.start_date
+  return new Date(match_date).getTime() < new Date().getTime()
+}
+
+
 const to_standard_time_zone = {
   'US/Atlantic': 'America/Puerto_Rico',
   'US/Eastern': 'America/New_York',
@@ -110,7 +116,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
   }
 }
 
-const configureBsdify = (api, config) => async (osdi, existing) => {
+const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) => {
   const getCreatorId = async () => {
     const creator_constituent = await api.getConstituentByEmail(
       osdi.contact.email_address
@@ -267,6 +273,7 @@ module.exports = (api, config) => {
             byId[c.id] = c
           })
 
+          console.log('osdifying')
           return await Promise.all(
             events.map(e => osdiify(e, byId[e.creator_cons_id]))
           )
@@ -282,7 +289,11 @@ module.exports = (api, config) => {
       return await osdiify(matches[0])
     },
     create: async object => {
-      const ready = await bsdify(object)
+      if (isInPast(object)) {
+        return throw new Error('Event is in past')
+      }
+
+      const ready = await bsdify(object, null, true)
       const result = await api.createEvent(ready)
       const all_events = await fetchAllEvents(api)
       const created = all_events.filter(
