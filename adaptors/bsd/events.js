@@ -288,11 +288,11 @@ module.exports = (api, config) => {
       return await osdiify(matches[0])
     },
     create: async object => {
-      const ready = await bsdify(object, null, true)
-      if (isInPast(ready)) {
+      if (isInPast(object)) {
         throw new Error('Event is in past')
       }
 
+      const ready = await bsdify(object, null, true)
       const result = await api.createEvent(ready)
       const all_events = await fetchAllEvents(api)
       const created = all_events.filter(
