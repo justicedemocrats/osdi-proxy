@@ -4,8 +4,7 @@ const zipcode_to_timezone = require('zipcode-to-timezone')
 const cacher = require('../../lib').cacher('bsd-event')
 
 const isInPast = ev => {
-  const match_date = ev.end_date || ev.start_date
-  return new Date(match_date).getTime() < new Date().getTime()
+  return new Date(ev.start_datetime_system).getTime() < new Date().getTime()
 }
 
 
@@ -289,11 +288,11 @@ module.exports = (api, config) => {
       return await osdiify(matches[0])
     },
     create: async object => {
-      if (isInPast(object)) {
+      const ready = await bsdify(object, null, true)
+      if (isInPast(ready)) {
         throw new Error('Event is in past')
       }
 
-      const ready = await bsdify(object, null, true)
       const result = await api.createEvent(ready)
       const all_events = await fetchAllEvents(api)
       const created = all_events.filter(
