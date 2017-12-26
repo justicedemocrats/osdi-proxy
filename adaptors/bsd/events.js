@@ -169,8 +169,6 @@ const configureBsdify = (api, config) => async (osdi, existing) => {
       )
     ]
 
-  console.log(osdi.start_date)
-
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
