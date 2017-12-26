@@ -206,7 +206,7 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
             .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
             .asMinutes()
         : undefined,
-    local_timezone: time_zone,
+    local_timezone: osdi.start_date ? time_zone : undefined,
     venue_name: osdi.location ? osdi.location.venue : undefined,
     venue_directions: osdi.instructions,
     venue_addr1:
