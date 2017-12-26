@@ -181,6 +181,8 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       )
     ]
 
+  const adjusted_start = existing ? moment(existing.start_dt + 'Z').tz(time_zone) : moment()
+
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
@@ -199,7 +201,7 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
         : undefined,
     start_datetime_system: osdi.start_date
       ? moment.tz(osdi.start_date, time_zone).format('YYYY-MM-DD HH:mm:ss')
-      : undefined,
+      : adjusted_start.format('YYYY-MM-DD HH:mm:ss'),
     duration:
       osdi.end_date && osdi.start_date
         ? moment
