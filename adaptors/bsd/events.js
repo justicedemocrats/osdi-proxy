@@ -4,7 +4,13 @@ const zipcode_to_timezone = require('zipcode-to-timezone')
 const cacher = require('../../lib').cacher('bsd-event')
 
 const isInPast = ev => {
-  return moment.tz(ev.start_date, ev.location.time_zone) < moment()
+  const time_zone = zipcode_to_timezone.lookup(ev.location.postal_code)
+  console.log(moment.tz(ev.start_date, time_zone))
+  console.log(moment())
+  const now = moment()
+  const start = moment.tz(ev.start_date, time_zone)
+  console.log(start.unix() < now.unix())
+  return start.unix() < now.unix()
 }
 
 
