@@ -291,7 +291,6 @@ module.exports = (api, config) => {
             byId[c.id] = c
           })
 
-          console.log('osdifying')
           return await Promise.all(
             events.map(e => osdiify(e, byId[e.creator_cons_id]))
           )
