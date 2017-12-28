@@ -5,14 +5,10 @@ const cacher = require('../../lib').cacher('bsd-event')
 
 const isInPast = ev => {
   const time_zone = zipcode_to_timezone.lookup(ev.location.postal_code)
-  console.log(moment.tz(ev.start_date, time_zone))
-  console.log(moment())
   const now = moment()
   const start = moment.tz(ev.start_date, time_zone)
-  console.log(start.unix() < now.unix())
   return start.unix() < now.unix()
 }
-
 
 const to_standard_time_zone = {
   'US/Atlantic': 'America/Puerto_Rico',
@@ -121,12 +117,15 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
   }
 }
 
-const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) => {
+const configureBsdify = (api, config) => async (
+  osdi,
+  existing,
+  castTimeZone
+) => {
   const getCreatorId = async () => {
     const creator_constituent = await api.getConstituentByEmail(
       osdi.contact.email_address
     )
-
 
     if (!creator_constituent) {
       const to_create = {
@@ -192,7 +191,9 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       )
     ]
 
-  const adjusted_start = existing ? moment(existing.start_dt + 'Z').tz(time_zone) : moment()
+  const adjusted_start = existing
+    ? moment(existing.start_dt + 'Z').tz(time_zone)
+    : moment()
 
   const base = {
     attendee_volunteer_message:
@@ -248,7 +249,7 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0',
     is_searchable: osdi.status == 'confirmed' ? 1 : 0,
     rsvp_allow: osdi.status == 'confirmed' ? 1 : 0,
-    status: osdi.status == 'rejected' || osdi.status == 'cancelled' : '0' : '1',
+    status: osdi.status == 'rejected' || osdi.status == 'cancelled' ? '0' : '1',
     attendee_require_phone: '1',
     host_receive_rsvp_emails: '0'
   }
@@ -284,14 +285,6 @@ module.exports = (api, config) => {
         (async () => {
           // Fetch all events
           const events = await fetchAllEvents(api)
-
-          console.log('Got all')
-
-          events.forEach(e => {
-            if (e.name.includes('12PM')) {
-              console.log(e)
-            }
-          })
 
           // Fetch and map all hosts
           const creators = events.map(e => e.creator_cons_id)
