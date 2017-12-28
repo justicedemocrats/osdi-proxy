@@ -246,7 +246,8 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       : undefined,
     flag_approval:
       osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0',
-    is_searchable: osdi.status == 'cancelled' ? '0' : '1',
+    is_searchable: osdi.status == 'confirmed' ? 1 : 0,
+    rsvp_allow: osdi.status == 'confirmed' ? 1 : 0,
     attendee_require_phone: '1'
   }
 
