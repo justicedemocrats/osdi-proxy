@@ -248,7 +248,8 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0',
     is_searchable: osdi.status == 'confirmed' ? 1 : 0,
     rsvp_allow: osdi.status == 'confirmed' ? 1 : 0,
-    attendee_require_phone: '1'
+    attendee_require_phone: '1',
+    host_receive_rsvp_emails: '0'
   }
 
   const copy = Object.assign({}, existing)
