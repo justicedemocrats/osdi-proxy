@@ -32,7 +32,7 @@ Object.keys(to_standard_time_zone).forEach(key => {
 
 const inferStatus = bsd => {
   if (bsd.flag_approval == '1') {
-    if (bsd.is_searchable == '1') {
+    if (bsd.is_searchable == '1' || bsd.status == '1') {
       return 'tentative'
     } else {
       return 'rejected'
@@ -248,6 +248,7 @@ const configureBsdify = (api, config) => async (osdi, existing, castTimeZone) =>
       osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0',
     is_searchable: osdi.status == 'confirmed' ? 1 : 0,
     rsvp_allow: osdi.status == 'confirmed' ? 1 : 0,
+    status: osdi.status == 'rejected' || osdi.status == 'cancelled' : '0' : '1',
     attendee_require_phone: '1',
     host_receive_rsvp_emails: '0'
   }
@@ -283,6 +284,14 @@ module.exports = (api, config) => {
         (async () => {
           // Fetch all events
           const events = await fetchAllEvents(api)
+
+          console.log('Got all')
+
+          events.forEach(e => {
+            if (e.name.includes('12PM')) {
+              console.log(e)
+            }
+          })
 
           // Fetch and map all hosts
           const creators = events.map(e => e.creator_cons_id)
