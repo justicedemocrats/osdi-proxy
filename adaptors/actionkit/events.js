@@ -1,5 +1,6 @@
-const moment = require('moment')
+const moment = require('moment-timezone')
 const format = 'YYYY-MM-DDTHH:mm:ss'
+const zipcode_to_timezone = require('zipcode-to-timezone')
 const cacher = require('../../lib').cacher('ak-event')
 
 module.exports = (api, config) => {
@@ -61,8 +62,8 @@ module.exports = (api, config) => {
       return await osdiify(to_return.body)
     },
     edit: async (id, edits) => {
-      const akified = await akify(edits, { id })
       const original = (await api.get(`event/${id}`)).body
+      const akified = await akify(edits, original)
       const fields = Object.keys(akified).filter(key => key.startsWith('field'))
 
       await Promise.all(
@@ -155,7 +156,9 @@ function filterUndefined(obj) {
 }
 
 function configureAkify(api, config) {
-  return async function akify(osdi) {
+  return async function akify(osdi, existing) {
+    const time_zone = zipcode_to_timezone.lookup(osdi.zip || existing.zip)
+
     const result = filterUndefined({
       address1: osdi.location
         ? osdi.location.address_lines
@@ -190,10 +193,10 @@ function configureAkify(api, config) {
       campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
       max_attendees: osdi.capacity,
       starts_at: osdi.start_date
-        ? moment(osdi.start_date).format(format)
+        ? moment.tz(osdi.start_date, time_zone).format(format)
         : undefined,
       ends_at: osdi.start_date
-        ? moment(osdi.end_date).format(format)
+        ? moment.tz(osdi.end_date, time_zone).format(format)
         : undefined,
       field_tags: osdi.tags ? JSON.stringify(osdi.tags) : undefined,
       field_type: osdi.type,
