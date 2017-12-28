@@ -107,6 +107,7 @@ function configureOsdify(api, config) {
     return {
       id: ak.id,
       identifiers: [`actionkit:${ak.id}`],
+      capacity: ak.max_attendees,
       location: {
         venue: ak.venue,
         address_lines: [ak.address1, ak.address2],
@@ -187,6 +188,7 @@ function configureAkify(api, config) {
         ? `/rest/v1/user/${osdi.organizer_id}/`
         : undefined,
       campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
+      max_attendees: osdi.capacity,
       starts_at: osdi.start_date
         ? moment(osdi.start_date).format(format)
         : undefined,

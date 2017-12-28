@@ -79,6 +79,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
   return {
     id: bsd.event_id,
     identifiers: [`bsd:${bsd.event_id}`],
+    capacity: bsd.capacity,
     location: {
       venue: bsd.venue_name,
       address_lines: [bsd.venue_addr1, bsd.venue_addr2],
@@ -234,6 +235,7 @@ const configureBsdify = (api, config) => async (
     venue_zip: osdi.location ? osdi.location.postal_code : undefined,
     venue_city: osdi.location ? osdi.location.locality : undefined,
     venue_state_cd: osdi.location ? osdi.location.region : undefined,
+    capacity: osdi.capacity,
     host_addr_addressee: existing
       ? putDefault(existing.host_addr_addressee)
       : undefined,
