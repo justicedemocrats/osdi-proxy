@@ -103,7 +103,7 @@ async function setEventField(api, ak, name, value) {
 }
 
 function configureOsdify(api, config) {
-  return async ak => {
+  return async function osdify(ak) {
     return {
       id: ak.id,
       identifiers: [`actionkit:${ak.id}`],
@@ -154,7 +154,7 @@ function filterUndefined(obj) {
 }
 
 function configureAkify(api, config) {
-  return async osdi => {
+  return async function akify(osdi) {
     const result = filterUndefined({
       address1: osdi.location
         ? osdi.location.address_lines
