@@ -716,6 +716,7 @@ class BSD {
       'chapter_id',
       'flag_approval',
       'outreach_page_id',
+      'status',
       'days'
     ]
 
