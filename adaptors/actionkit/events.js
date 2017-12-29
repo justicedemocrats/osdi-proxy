@@ -157,7 +157,9 @@ function filterUndefined(obj) {
 
 function configureAkify(api, config) {
   return async function akify(osdi, existing) {
-    const time_zone = zipcode_to_timezone.lookup(osdi.zip || existing.zip)
+    const time_zone = zipcode_to_timezone.lookup(
+      (osdi.location && osdi.location.postal_code) || existing.zip
+    )
 
     const result = filterUndefined({
       address1: osdi.location
