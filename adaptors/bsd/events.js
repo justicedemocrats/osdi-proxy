@@ -37,9 +37,7 @@ const inferStatus = bsd => {
 
   if (bsd.is_searchable == '1') {
     return 'confirmed'
-  } else {
-    return 'cancelled'
-  }
+  } 
 }
 
 const filterUndefined = obj => {

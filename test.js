@@ -37,18 +37,18 @@ const main = async () => {
 
     // const result = await bsd.events.create(tester)
     // console.log(result)
-    const result = await bsd.events.edit('44356', {
-      start_date: '2017-01-03T06:00:00.000',
-      end_date: '2017-01-03T08:00:00.000'
-    })
+    // const result = await bsd.events.edit('44356', {
+    //   start_date: '2017-01-03T06:00:00.000',
+    //   end_date: '2017-01-03T08:00:00.000'
+    // })
     // const result = await bsd.events.edit('44368', {tags: ['hello']})
     // console.log(result)
 
     // await bsd.events.one('44356')
-    console.log(await bsd.events.one('44356'))
+    // console.log(await bsd.events.one('44356'))
 
     // console.log(await bsd.events.findAll())
-    // const events = await bsd.events.findAll()
+    const events = await bsd.events.findAll()
     // console.log(events.filter(e => e.description.includes('Ben Packer')))
     // console.log(events[0])
     // console.log(new Set(events.map(e => e.flag_approval)))
