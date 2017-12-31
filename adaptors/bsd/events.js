@@ -69,6 +69,8 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     bsd.start_tz && to_standard_time_zone[bsd.start_tz]
       ? to_standard_time_zone[bsd.start_tz]
       : zipcode_to_timezone.lookup(bsd.venue_zip)
+        ? zipcode_to_timezone.lookup(bsd.venue_zip)
+        : 'America/Chicago'
 
   const adjusted_start = moment(bsd.start_dt + 'Z').tz(time_zone)
 
