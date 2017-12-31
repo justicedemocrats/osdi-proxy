@@ -65,8 +65,6 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     // nothing
   }
 
-  console.log(metadata)
-
   const time_zone =
     bsd.start_tz && to_standard_time_zone[bsd.start_tz]
       ? to_standard_time_zone[bsd.start_tz]
@@ -169,7 +167,7 @@ const configureBsdify = (api, config) => async (
 
   let metadata = {}
   try {
-    metadata = JSON.parse(bsd.attendee_volunteer_message)
+    metadata = JSON.parse(existing.attendee_volunteer_message)
   } catch (ex) {
     // nothing
   }
