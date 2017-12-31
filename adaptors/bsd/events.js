@@ -65,6 +65,8 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     // nothing
   }
 
+  console.log(metadata)
+
   const time_zone =
     bsd.start_tz && to_standard_time_zone[bsd.start_tz]
       ? to_standard_time_zone[bsd.start_tz]
@@ -243,11 +245,16 @@ const configureBsdify = (api, config) => async (
     host_addr_state_cd: existing
       ? putDefault(existing.host_addr_state_cd)
       : undefined,
-    flag_approval:
-      osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0',
-    is_searchable: osdi.status == 'confirmed' ? 1 : 0,
-    rsvp_allow: osdi.status == 'confirmed' ? 1 : 0,
-    status: osdi.status == 'rejected' || osdi.status == 'cancelled' ? '0' : '1',
+    flag_approval: osdi.status
+      ? osdi.status == 'rejected' || osdi.status == 'tentative' ? '1' : '0'
+      : undefined,
+    is_searchable: osdi.status
+      ? osdi.status == 'confirmed' ? 1 : 0
+      : undefined,
+    rsvp_allow: osdi.status ? (osdi.status == 'confirmed' ? 1 : 0) : undefined,
+    status: osdi.status
+      ? osdi.status == 'rejected' || osdi.status == 'cancelled' ? '0' : '1'
+      : undefined,
     attendee_require_phone: '1',
     host_receive_rsvp_emails: '0'
   }
