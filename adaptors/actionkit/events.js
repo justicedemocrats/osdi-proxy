@@ -106,7 +106,7 @@ async function setEventField(api, ak, name, value) {
 function configureOsdify(api, config) {
   return async function osdify(ak) {
     const signups = await api.get('eventsignup').query({ event: ak.id })
-    const attendance_count = result.body.meta.total_count
+    const attendance_count = signups.body.meta.total_count
 
     return {
       id: ak.id,
