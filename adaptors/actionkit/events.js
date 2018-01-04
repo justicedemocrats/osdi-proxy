@@ -105,6 +105,9 @@ async function setEventField(api, ak, name, value) {
 
 function configureOsdify(api, config) {
   return async function osdify(ak) {
+    const signups = await api.get('eventsignup').query({ event: ak.id })
+    const attendance_count = result.body.meta.total_count
+
     return {
       id: ak.id,
       identifiers: [`actionkit:${ak.id}`],
@@ -122,6 +125,7 @@ function configureOsdify(api, config) {
       title: ak.title,
       start_date: ak.starts_at,
       end_date: ak.ends_at,
+      attendance_count: attendance_count,
       description: ak.public_description,
       instructions: ak.directions,
       organizer_id: ak.creator.split('/')[4],
