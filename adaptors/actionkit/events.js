@@ -159,6 +159,18 @@ function filterUndefined(obj) {
   }, {})
 }
 
+function akifyTime(string, time_zone) {
+  const base_moment = moment(string)
+
+  if (base_moment._tzm !== undefined) {
+    const split = string.split('-')
+    const without_last = split.slice(0, split.length - 1).join('-')
+    return moment.tz(without_last, time_zone)
+  } else {
+    return moment.tz(string, time_zone)
+  }
+}
+
 function configureAkify(api, config) {
   return async function akify(osdi, existing) {
     const time_zone =
@@ -202,10 +214,10 @@ function configureAkify(api, config) {
       campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
       max_attendees: osdi.capacity,
       starts_at: osdi.start_date
-        ? moment.tz(osdi.start_date, time_zone).format(format)
+        ? akifyTime(osdi.start_date).format(format)
         : undefined,
       ends_at: osdi.start_date
-        ? moment.tz(osdi.end_date, time_zone).format(format)
+        ? akifyTime(osdi.end_date).format(format)
         : undefined,
       field_tags: osdi.tags ? JSON.stringify(osdi.tags) : undefined,
       field_type: osdi.type,
