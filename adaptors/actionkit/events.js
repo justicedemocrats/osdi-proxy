@@ -120,6 +120,7 @@ function configureOsdify(api, config) {
         postal_code: ak.zip,
         location: [ak.latitude, ak.longitude]
       },
+      time_zone: time_zone,
       browser_url: config.eventUrlBase + `/${ak.id}`,
       name: ak.title ? ak.title.toLowerCase().replace(/ /g, '-') : undefined,
       title: ak.title,
