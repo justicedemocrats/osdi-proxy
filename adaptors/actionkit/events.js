@@ -108,7 +108,7 @@ function configureOsdify(api, config) {
     const signups = await api.get('eventsignup').query({ event: ak.id })
     const attendance_count = signups.body.meta.total_count
 
-    const time_zone = zipcode_to_timezone(ak.zip)
+    const time_zone = zipcode_to_timezone.lookup(ak.zip)
 
     return {
       id: ak.id,
