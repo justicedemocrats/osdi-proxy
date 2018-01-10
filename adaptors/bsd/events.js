@@ -273,77 +273,84 @@ module.exports = (api, config) => {
   const osdiify = configureOsdify(api, config)
   const bsdify = configureBsdify(api, config)
 
-  return {
-    count: async () => {
-      const bsdEvents = await api.searchEvents({
-        date_start: '2000-01-01 00:00:00'
-      })
+  const count = async () => {
+    const bsdEvents = await api.searchEvents({
+      date_start: '2000-01-01 00:00:00'
+    })
 
-      return bsdEvents.length
-    },
-    findAll: async params => {
-      if (params && params.page > 0) {
-        return []
-      }
-
-      return await cacher.fetch_and_update(
-        'all',
-        (async () => {
-          // Fetch all events
-          const events = await fetchAllEvents(api)
-
-          // Fetch and map all hosts
-          const creators = events.map(e => e.creator_cons_id)
-          const creatorCons = await api.getConstituentsByIds(creators)
-
-          const byId = {}
-          creatorCons.forEach(c => {
-            byId[c.id] = c
-          })
-
-          return await Promise.all(
-            events.map(e => osdiify(e, byId[e.creator_cons_id]))
-          )
-        })()
-      )
-    },
-    one: async id => {
-      const matches = await api.searchEvents({
-        event_id: id,
-        date_start: '2000-01-01 00:00:00'
-      })
-
-      return await osdiify(matches[0])
-    },
-    create: async object => {
-      if (isInPast(object)) {
-        throw new Error('Event is in past')
-      }
-
-      const ready = await bsdify(object, null, true)
-      const result = await api.createEvent(ready)
-      const all_events = await fetchAllEvents(api)
-      const created = all_events.filter(
-        e => e.event_id_obfuscated == result.event_id_obfuscated
-      )[0]
-      return await osdiify(created)
-    },
-    edit: async (id, edits) => {
-      const matches = await api.searchEvents({
-        event_id: id,
-        date_start: '2000-01-01 00:00:00'
-      })
-
-      const existing = matches[0]
-      const bsdified = await bsdify(edits, existing)
-      const result = await api.updateEvent(bsdified)
-      return result
-    },
-    delete: async id => {
-      process.exit()
-      // return await api.put(`delete/${id}`)
-    }
+    return bsdEvents.length
   }
+
+  const findAll = async params => {
+    if (params && params.page > 0) {
+      return []
+    }
+
+    return await cacher.fetch_and_update(
+      'all',
+      (async () => {
+        // Fetch all events
+        const events = await fetchAllEvents(api)
+
+        // Fetch and map all hosts
+        const creators = events.map(e => e.creator_cons_id)
+        const creatorCons = await api.getConstituentsByIds(creators)
+
+        const byId = {}
+        creatorCons.forEach(c => {
+          byId[c.id] = c
+        })
+
+        return await Promise.all(
+          events.map(e => osdiify(e, byId[e.creator_cons_id]))
+        )
+      })()
+    )
+  }
+
+  const one = async id => {
+    const matches = await api.searchEvents({
+      event_id: id,
+      date_start: '2000-01-01 00:00:00'
+    })
+
+    return await osdiify(matches[0])
+  }
+
+  const create = async object => {
+    if (isInPast(object)) {
+      throw new Error('Event is in past')
+    }
+
+    const ready = await bsdify(object, null, true)
+    const result = await api.createEvent(ready)
+    const all_events = await fetchAllEvents(api)
+    const created = all_events.filter(
+      e => e.event_id_obfuscated == result.event_id_obfuscated
+    )[0]
+    findAll()
+    return await osdiify(created)
+  }
+
+  const edit = async (id, edits) => {
+    const matches = await api.searchEvents({
+      event_id: id,
+      date_start: '2000-01-01 00:00:00'
+    })
+
+    const existing = matches[0]
+    const bsdified = await bsdify(edits, existing)
+    const result = await api.updateEvent(bsdified)
+    findAll()
+    return result
+  }
+
+  const doDelete = async id => {
+    return process.exit()
+    // return await api.put(`delete/${id}`)
+  }
+
+  return { one, findAll, create, edit, delete: doDelete, count }
 }
 
 function transformEventType(type) {

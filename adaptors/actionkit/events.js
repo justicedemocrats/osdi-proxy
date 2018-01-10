@@ -7,83 +7,90 @@ module.exports = (api, config) => {
   const osdiify = configureOsdify(api, config)
   const akify = configureAkify(api, config)
 
-  return {
-    count: async () => {
-      const result = await api.get('event')
-      return result.body.meta.total_count
-    },
-    findAll: async params => {
-      const page = (params && params.page) || 0
-      const reference = `all-${page}`
-
-      return await cacher.fetch_and_update(
-        reference,
-        (async () => {
-          const result = await api
-            .get('event')
-            .query({ _offset: page * 100, _limit: 100 })
-
-          const { objects } = result.body
-
-          const final = await Promise.all(objects.map(osdiify))
-          return final
-        })()
-      )
-    },
-    one: async id => {
-      const result = await api.get(`event/${id}`)
-      const final = await osdiify(result.body)
-      return final
-    },
-    create: async object => {
-      object.organizer_id = await ensureUser(api, object.contact.email_address)
-      const akified = await akify(object)
-
-      const result = await api.post('event').send(akified)
-      const split_location = result.headers.location.split('/')
-      const event_id = split_location[split_location.length - 2]
-
-      const for_field_creation = { id: event_id, fields: [] }
-
-      const fields = Object.keys(akified).filter(key => key.startsWith('field'))
-
-      await Promise.all(
-        fields.map(attr =>
-          setEventField(
-            api,
-            for_field_creation,
-            attr.split('field_')[1],
-            akified[attr]
-          )
-        )
-      )
-
-      const to_return = await api.get(`event/${event_id}`)
-      return await osdiify(to_return.body)
-    },
-    edit: async (id, edits) => {
-      const original = (await api.get(`event/${id}`)).body
-      const akified = await akify(edits, original)
-      const fields = Object.keys(akified).filter(key => key.startsWith('field'))
-
-      await Promise.all(
-        fields.map(attr =>
-          setEventField(api, original, attr.split('field_')[1], akified[attr])
-        )
-      )
-
-      fields.forEach(f => {
-        delete akified[f]
-      })
-
-      const result = await api.put(`event/${id}`).send(akified)
-
-      return result.body
-    },
-    delete: async id => {
-      return await api.put(`delete/${id}`)
-    }
+  const count = async () => {
+    const result = await api.get('event')
+    return result.body.meta.total_count
   }
+
+  const findAll = async params => {
+    const page = (params && params.page) || 0
+    const reference = `all-${page}`
+
+    return await cacher.fetch_and_update(
+      reference,
+      (async () => {
+        const result = await api
+          .get('event')
+          .query({ _offset: page * 100, _limit: 100 })
+
+        const { objects } = result.body
+
+        const final = await Promise.all(objects.map(osdiify))
+        return final
+      })()
+    )
+  }
+
+  const one = async id => {
+    const result = await api.get(`event/${id}`)
+    const final = await osdiify(result.body)
+    return final
+  }
+
+  const create = async object => {
+    object.organizer_id = await ensureUser(api, object.contact.email_address)
+    const akified = await akify(object)
+
+    const result = await api.post('event').send(akified)
+    const split_location = result.headers.location.split('/')
+    const event_id = split_location[split_location.length - 2]
+
+    const for_field_creation = { id: event_id, fields: [] }
+
+    const fields = Object.keys(akified).filter(key => key.startsWith('field'))
+
+    await Promise.all(
+      fields.map(attr =>
+        setEventField(
+          api,
+          for_field_creation,
+          attr.split('field_')[1],
+          akified[attr]
+        )
+      )
+    )
+    findAll()
+
+    const to_return = await api.get(`event/${event_id}`)
+    return await osdiify(to_return.body)
+  }
+
+  const edit = async (id, edits) => {
+    const original = (await api.get(`event/${id}`)).body
+    const akified = await akify(edits, original)
+    const fields = Object.keys(akified).filter(key => key.startsWith('field'))
+
+    await Promise.all(
+      fields.map(attr =>
+        setEventField(api, original, attr.split('field_')[1], akified[attr])
+      )
+    )
+
+    fields.forEach(f => {
+      delete akified[f]
+    })
+
+    const result = await api.put(`event/${id}`).send(akified)
+    findAll()
+
+    return result.body
+  }
+
+  const doDelete = async id => {
+    return await api.put(`delete/${id}`)
+  }
+
+  return { one, findAll, create, edit, delete: doDelete, count }
 }
 
 function getEventField(ak, name) {
