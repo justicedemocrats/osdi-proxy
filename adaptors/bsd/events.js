@@ -347,7 +347,7 @@ module.exports = (api, config) => {
   }
 
   const doDelete = async id => {
-    const result = await api.delete(`delete/${id}`)
+    const result = await api.deleteEvent(id)
     findAll()
     return result
   }
