@@ -257,7 +257,8 @@ const configureBsdify = (api, config) => async (
       ? osdi.status == 'rejected' || osdi.status == 'cancelled' ? '0' : '1'
       : undefined,
     attendee_require_phone: '1',
-    host_receive_rsvp_emails: '0'
+    host_receive_rsvp_emails: '0',
+    attendee_visibility: 'COUNT'
   }
 
   const copy = Object.assign({}, existing)

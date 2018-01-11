@@ -145,9 +145,11 @@ function configureOsdify(api, config) {
       instructions: ak.directions,
       organizer_id: ak.creator.split('/')[4],
       status:
-        ak.status == 'cancelled' || ak.status == 'deleted'
-          ? ak.is_approved ? 'cancelled' : 'rejected'
-          : ak.is_approved ? 'confirmed' : 'tentative',
+        ak.status == 'deleted'
+          ? 'cancelled'
+          : ak.status == 'cancelled'
+            ? ak.is_approved ? 'cancelled' : 'rejected'
+            : ak.is_approved ? 'confirmed' : 'tentative',
 
       type: getEventField(ak, 'type') || 'Unknown',
       tags: getEventField(ak, 'tags')
