@@ -63,6 +63,16 @@ module.exports = client => {
     }
   })
 
+  app.delete('/events/:id', async (req, res) => {
+    try {
+      const result = await client.events.delete( req.params.id )
+      return res.json(result)
+    } catch (ex) {
+      console.error(ex)
+      return res.status(400).send(ex)
+    }
+  })
+
   app.get('/people/:id', async (req, res) => {
     try {
       const result = await client.people.one(req.params.id)
@@ -72,6 +82,7 @@ module.exports = client => {
       return res.status(400).send(ex)
     }
   })
+
 
   return app
 }

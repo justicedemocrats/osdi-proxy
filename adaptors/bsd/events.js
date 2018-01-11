@@ -347,8 +347,9 @@ module.exports = (api, config) => {
   }
 
   const doDelete = async id => {
-    return process.exit()
-    // return await api.put(`delete/${id}`)
+    const result = await api.delete(`delete/${id}`)
+    findAll()
+    return result
   }
 
   return { one, findAll, create, edit, delete: doDelete, count }

@@ -626,6 +626,18 @@ class BSD {
     return response
   }
 
+  async deleteEvent(event_id) {
+    let response = this.request(
+      '/event/delete_event',
+      { event_id },
+      'POST'
+    ).catch(ex => {
+      console.error(`BSD event ${event_id} could not be deleted.`)
+    })
+
+    return response
+  }
+
   async deleteEvents(eventIdArray) {
     let promises = eventIdArray.map(event_id => {
       return this.request('/event/delete_event', { event_id }, 'POST').catch(
@@ -726,7 +738,9 @@ class BSD {
       if (key === 'start_tz') {
         inputs['local_timezone'] = event[key]
       } else if (key === 'start_dt') {
-        eventDate['start_datetime_system'] = moment(event['start_dt']).format('YYYY-MM-DD HH:mm:ss')
+        eventDate['start_datetime_system'] = moment(event['start_dt']).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
       } else if (key === 'start_datetime_system') {
         eventDate['start_datetime_system'] = event['start_datetime_system']
       } else if (key === 'is_searchable') {
