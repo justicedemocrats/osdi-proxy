@@ -643,6 +643,7 @@ class BSD {
       return this.request('/event/delete_event', { event_id }, 'POST').catch(
         ex => {
           console.error(`BSD event ${event_id} could not be deleted.`)
+          console.error(ex)
         }
       )
     })
