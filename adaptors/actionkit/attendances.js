@@ -29,16 +29,12 @@ module.exports = api => ({
     const page = (params && params.page) || 0
     const reference = `all-${page}`
 
-    return await cacher.fetch_and_update(
-      reference,
-      (async () => {
-        const results = await api
-          .get('eventsignup')
-          .query({ event: params.event, _offset: 100 * page, _limit: 100 })
-        return await Promise.all(
-          results.body.objects.map(obj => osdiify(api, obj))
-        )
-      })()
+    const results = await api
+      .get('eventsignup')
+      .query({ event: params.event, _offset: 100 * page, _limit: 100 })
+
+    return await Promise.all(
+      results.body.objects.map(obj => osdiify(api, obj))
     )
   },
 
