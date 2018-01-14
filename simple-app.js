@@ -5,7 +5,7 @@ module.exports = client => {
 
   app.get('/events', async (req, res) => {
     try {
-      if (page == 'all') {
+      if (req.query.page == 'all') {
         let page = 0
         let next = await client.events.findAll({ page })
         let results = next.slice()
