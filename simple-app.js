@@ -5,8 +5,24 @@ module.exports = client => {
 
   app.get('/events', async (req, res) => {
     try {
-      const result = await client.events.findAll({ page: req.query.page || 0 })
-      return res.json(result)
+      if (page == 'all') {
+        let page = 0
+        let next = await client.events.findAll({ page })
+        let results = next.slice()
+
+        while (next.length > 0) {
+          page++
+          next = await client.events.findAll({ page })
+          results = results.concat(next)
+        }
+        return res.json(results)
+
+      } else {
+        const result = await client.events.findAll({
+          page: req.query.page || 0
+        })
+        return res.json(result)
+      }
     } catch (ex) {
       console.error(ex)
       return res.status(400).send(ex)
@@ -45,7 +61,10 @@ module.exports = client => {
 
   app.get('/events/:id/rsvps', async (req, res) => {
     try {
-      const result = await client.attendances.findAll({ event: req.params.id, page: req.query.page || 0 })
+      const result = await client.attendances.findAll({
+        event: req.params.id,
+        page: req.query.page || 0
+      })
       return res.json(result)
     } catch (ex) {
       console.error(ex)
@@ -65,7 +84,7 @@ module.exports = client => {
 
   app.delete('/events/:id', async (req, res) => {
     try {
-      const result = await client.events.delete( req.params.id )
+      const result = await client.events.delete(req.params.id)
       return res.json(result)
     } catch (ex) {
       console.error(ex)
@@ -82,7 +101,6 @@ module.exports = client => {
       return res.status(400).send(ex)
     }
   })
-
 
   return app
 }
