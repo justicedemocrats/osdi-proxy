@@ -138,8 +138,8 @@ const configureBsdify = (api, config) => async (
           phone: osdi.contact.phone_number,
           is_primary: 1
         },
-        firstname: osdi.contact ? osdi.contact.name.split(' ')[0] : null,
-        lastname: osdi.contact ? osdi.contact.name.split(' ')[1] : null
+        firstname: osdi.contact.name ? osdi.contact.name.split(' ')[0] : null,
+        lastname: osdi.contact.name ? osdi.contact.name.split(' ')[1] : null
       }
 
       return (await api.setConstituentData(to_create)).id
