@@ -208,7 +208,7 @@ const configureBsdify = (api, config) => async (
         ? await getCreatorId()
         : undefined,
 
-    creator_name: osdi.contact ?? osdi.contact.name : undefined,
+    creator_name: osdi.contact ? osdi.contact.name : undefined,
     contact_phone:
       osdi.contact && osdi.contact.phone_number
         ? osdi.contact.phone_number
