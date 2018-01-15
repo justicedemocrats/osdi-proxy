@@ -293,8 +293,9 @@ module.exports = (api, config) => {
         // Fetch all events
         const events = await fetchAllEvents(api)
 
+
         // Fetch and map all hosts
-        const creators = events.map(e => e.creator_cons_id)
+        const creators = [... new Set(events.map(e => e.creator_cons_id))]
         const creatorCons = await api.getConstituentsByIds(creators)
 
         const byId = {}
@@ -302,9 +303,11 @@ module.exports = (api, config) => {
           byId[c.id] = c
         })
 
-        return await Promise.all(
+        const results = await Promise.all(
           events.map(e => osdiify(e, byId[e.creator_cons_id]))
         )
+
+        return results
       })()
     )
   }
