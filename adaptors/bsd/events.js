@@ -208,11 +208,12 @@ const configureBsdify = (api, config) => async (
         ? await getCreatorId()
         : undefined,
 
-    contact_name: osdi.contact.name,
+    creator_name: osdi.contact.name,
     contact_phone:
       osdi.contact && osdi.contact.phone_number
         ? osdi.contact.phone_number
         : undefined,
+
     start_datetime_system: osdi.start_date
       ? moment.tz(osdi.start_date, time_zone).format('YYYY-MM-DD HH:mm:ss')
       : adjusted_start.format('YYYY-MM-DD HH:mm:ss'),
