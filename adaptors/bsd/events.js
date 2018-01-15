@@ -207,6 +207,8 @@ const configureBsdify = (api, config) => async (
       osdi.contact && osdi.contact.email_address
         ? await getCreatorId()
         : undefined,
+
+    contact_name: osdi.contact.name,
     contact_phone:
       osdi.contact && osdi.contact.phone_number
         ? osdi.contact.phone_number
@@ -293,9 +295,8 @@ module.exports = (api, config) => {
         // Fetch all events
         const events = await fetchAllEvents(api)
 
-
         // Fetch and map all hosts
-        const creators = [... new Set(events.map(e => e.creator_cons_id))]
+        const creators = [...new Set(events.map(e => e.creator_cons_id))]
         const creatorCons = await api.getConstituentsByIds(creators)
 
         const byId = {}
