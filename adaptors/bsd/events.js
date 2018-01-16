@@ -112,7 +112,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     contact: {
       email_address: firstHaving(creator.cons_email, 'email'),
       phone_number: firstHaving(creator.cons_phone, 'phone'),
-      name: `${creator.firstname} ${creator.lastname}`
+      name: bsd.creator_name
     }
   }
 }
