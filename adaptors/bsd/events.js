@@ -111,7 +111,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     tags: metadata.t || [],
     contact: {
       email_address: firstHaving(creator.cons_email, 'email'),
-      phone_number: firstHaving(creator.cons_phone, 'phone'),
+      phone_number: bsd.creator_phone,
       name: bsd.creator_name || `${creator.firstname} ${creator.lastname}`
     }
   }
@@ -138,8 +138,8 @@ const configureBsdify = (api, config) => async (
           phone: osdi.contact.phone_number,
           is_primary: 1
         },
-        firstname: osdi.contact ? osdi.contact.name.split(' ')[0] : null,
-        lastname: osdi.contact ? osdi.contact.name.split(' ')[1] : null
+        firstname: (osdi.contact && osdi.contact.name) ? osdi.contact.name.split(' ')[0] : undefined,
+        lastname: (osdi.contact && osdi.contact.name) ? osdi.contact.name.split(' ')[1] : undefined
       }
 
       return (await api.setConstituentData(to_create)).id
@@ -150,8 +150,8 @@ const configureBsdify = (api, config) => async (
           phone: osdi.contact.phone_number,
           is_primary: 1
         },
-        firstname: osdi.contact ? osdi.contact.name.split(' ')[0] : null,
-        lastname: osdi.contact ? osdi.contact.name.split(' ')[1] : null
+        firstname: (osdi.contact && osdi.contact.name) ? osdi.contact.name.split(' ')[0] : undefined,
+        lastname: (osdi.contact && osdi.contact.name) ? osdi.contact.name.split(' ')[1] : undefined
       })
     }
 
