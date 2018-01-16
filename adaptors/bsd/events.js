@@ -112,7 +112,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     contact: {
       email_address: firstHaving(creator.cons_email, 'email'),
       phone_number: firstHaving(creator.cons_phone, 'phone'),
-      name: bsd.creator_name
+      name: bsd.creator_name || `${creator.firstname} ${creator.lastname}`
     }
   }
 }
@@ -314,6 +314,7 @@ module.exports = (api, config) => {
           events.map(e => osdiify(e, byId[e.creator_cons_id]))
         )
 
+        console.log('Finished findAll for events')
         return results
       })()
     )
