@@ -93,9 +93,9 @@ module.exports = (api, config) => {
   return { one, findAll, create, edit, delete: doDelete, count }
 }
 
-function getEventField(ak, name) {
+function getEventField(ak, name, backup) {
   const match = ak.fields.filter(field => field.name == name)[0]
-  return match ? match.value : undefined
+  return match ? match.value : backup
 }
 
 async function setEventField(api, ak, name, value) {
@@ -127,7 +127,7 @@ function configureOsdify(api, config) {
       identifiers: [`actionkit:${ak.id}`],
       capacity: ak.max_attendees,
       location: {
-        public: getEventField(ak, 'location_public'),
+        public: getEventField(ak, 'location_public', false),
         venue: ak.venue,
         address_lines: [ak.address1, ak.address2],
         locality: ak.city,
