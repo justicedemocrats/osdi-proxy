@@ -138,8 +138,8 @@ const configureBsdify = (api, config) => async (
           phone: osdi.contact.phone_number,
           is_primary: 1
         },
-        firstname: osdi.contact.name ? osdi.contact.name.split(' ')[0] : null,
-        lastname: osdi.contact.name ? osdi.contact.name.split(' ')[1] : null
+        firstname: osdi.contact ? osdi.contact.name.split(' ')[0] : null,
+        lastname: osdi.contact ? osdi.contact.name.split(' ')[1] : null
       }
 
       return (await api.setConstituentData(to_create)).id
@@ -150,8 +150,8 @@ const configureBsdify = (api, config) => async (
           phone: osdi.contact.phone_number,
           is_primary: 1
         },
-        firstname: osdi.contact.name.split(' ')[0],
-        lastname: osdi.contact.name.split(' ')[1]
+        firstname: osdi.contact ? osdi.contact.name.split(' ')[0] : null,
+        lastname: osdi.contact ? osdi.contact.name.split(' ')[1] : null
       })
     }
 
@@ -298,11 +298,16 @@ module.exports = (api, config) => {
 
         // Fetch and map all hosts
         const creators = [...new Set(events.map(e => e.creator_cons_id))]
-        const creatorCons = await api.getConstituentsByIds(creators)
+        const chunks = chunkBy(creators, 500)
+        const creatorConsChunks = await Promise.all(
+          chunks.map(chunk => api.getConstituentsByIds(chunk))
+        )
 
         const byId = {}
-        creatorCons.forEach(c => {
-          byId[c.id] = c
+        creatorConsChunks.forEach(chunk => {
+          chunk.forEach(c => {
+            byId[c.id] = c
+          })
         })
 
         const results = await Promise.all(
@@ -334,6 +339,7 @@ module.exports = (api, config) => {
     const created = all_events.filter(
       e => e.event_id_obfuscated == result.event_id_obfuscated
     )[0]
+
     findAll()
     return await osdiify(created)
   }
@@ -362,4 +368,13 @@ module.exports = (api, config) => {
 
 function transformEventType(type) {
   return type.replace(/ /g, '').toLowerCase()
+}
+
+function chunkBy(list, n) {
+  const chunks = []
+  const n_chunks = Math.ceil(list.length / n)
+
+  return new Array(n_chunks)
+    .fill(null)
+    .map((_, idx) => list.slice(idx * n, (idx + 1) * n))
 }
