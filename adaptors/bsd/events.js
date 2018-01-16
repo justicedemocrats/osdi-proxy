@@ -261,6 +261,7 @@ const configureBsdify = (api, config) => async (
       : undefined,
     attendee_require_phone: '1',
     host_receive_rsvp_emails: '0',
+    rsvp_reminder_email_sent: '1',
     attendee_visibility: 'COUNT'
   }
 
