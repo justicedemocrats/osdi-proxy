@@ -111,7 +111,7 @@ async function setEventField(api, ak, name, value) {
 }
 
 function configureOsdify(api, config) {
-  return async function osdify(ak) {
+  return async function osdiify(ak) {
     const signups = await api.get('eventsignup').query({ event: ak.id })
     const attendance_count = signups.body.meta.total_count
 
@@ -127,6 +127,7 @@ function configureOsdify(api, config) {
       identifiers: [`actionkit:${ak.id}`],
       capacity: ak.max_attendees,
       location: {
+        public: getEventField(ak, 'location_public'),
         venue: ak.venue,
         address_lines: [ak.address1, ak.address2],
         locality: ak.city,
@@ -238,6 +239,7 @@ function configureAkify(api, config) {
         : undefined,
       field_tags: osdi.tags ? JSON.stringify(osdi.tags) : undefined,
       field_type: osdi.type,
+      field_location_public: (osdi.location && osdi.location.public) ? osdi.location.public : undefined,
       host_is_confirmed: true,
       field_contact_email_address: osdi.contact
         ? osdi.contact.email_address
