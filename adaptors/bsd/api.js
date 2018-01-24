@@ -722,6 +722,7 @@ class BSD {
       'rsvp_use_reminder_email',
       'rsvp_reminder_email_sent',
       'rsvp_reminder_hours',
+      'rsvp_email_reminder_hours',
       'rsvp_allow',
       'rsvp_require_signup',
       'rsvp_disallow_account',
