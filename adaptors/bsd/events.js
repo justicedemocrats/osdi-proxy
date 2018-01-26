@@ -276,7 +276,7 @@ const configureBsdify = (api, config) => async (
     rsvp_use_reminder_email: '1',
     rsvp_reminder_hours: 24,
     rsvp_email_reminder_hours: 24,
-    attendee_visibility: '0'
+    attendee_visibility: '2'
   }
 
   const copy = Object.assign({}, existing)
