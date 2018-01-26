@@ -754,10 +754,9 @@ class BSD {
       else if (key === 'contact_phone' && event[key])
         inputs[key] = event[key].replace(/\D/g, '')
       else if (key === 'attendee_visibility') {
-        inputs[key] = event[key]
-        // inputs[key] = 'NONE'
-        // if (event[key] === 0) inputs[key] = 'COUNT'
-        // else if (event[key] === 2) inputs[key] = 'FIRST'
+        inputs[key] = 'NONE'
+        if (event[key] === 0) inputs[key] = 'COUNT'
+        else if (event[key] === 2) inputs[key] = 'FIRST'
       } else if (apiKeys.indexOf(key) !== -1) inputs[key] = event[key]
     })
     if (Object.keys(eventDate).length > 0 && !inputs.hasOwnProperty('days')) {
