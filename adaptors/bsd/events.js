@@ -65,6 +65,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     // nothing
   }
 
+
   const time_zone =
     bsd.start_tz && to_standard_time_zone[bsd.start_tz]
       ? to_standard_time_zone[bsd.start_tz]
@@ -207,6 +208,10 @@ const configureBsdify = (api, config) => async (
     ? moment(existing.start_dt + 'Z').tz(time_zone)
     : moment()
 
+  console.log(existing.start_dt)
+  console.log(osdi.start_date)
+  console.log(time_zone)
+
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
@@ -235,7 +240,9 @@ const configureBsdify = (api, config) => async (
             .duration(moment(osdi.end_date).diff(moment(osdi.start_date)))
             .asMinutes()
         : undefined,
+
     local_timezone: osdi.start_date ? time_zone : undefined,
+    start_tz: osdi.start_date ? moment.tz.zone(time_zone).abbr(new Date()) : undefined,
     venue_name: osdi.location ? osdi.location.venue : undefined,
     venue_directions: osdi.instructions,
     venue_addr1:
