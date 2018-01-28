@@ -134,8 +134,8 @@ function configureOsdify(api, config) {
         region: ak.state,
         postal_code: ak.zip,
         location: {
-          latitude = ak.latitude,
-          longitude = ak.longitude
+          latitude: ak.latitude,
+          longitude: ak.longitude
         }
       },
       time_zone: time_zone,
