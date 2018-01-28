@@ -86,7 +86,10 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
       locality: bsd.venue_city,
       region: bsd.venue_state_cd,
       postal_code: bsd.venue_zip,
-      location: [bsd.latitude, bsd.longitude],
+      location: {
+        latitude = bsd.latitude,
+        longitude = bsd.longitude
+      },
       time_zone: time_zone
     },
 

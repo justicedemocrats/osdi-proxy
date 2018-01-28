@@ -133,7 +133,10 @@ function configureOsdify(api, config) {
         locality: ak.city,
         region: ak.state,
         postal_code: ak.zip,
-        location: [ak.latitude, ak.longitude]
+        location: {
+          latitude = ak.latitude,
+          longitude = ak.longitude
+        }
       },
       time_zone: time_zone,
       browser_url: config.eventUrlBase + `/${ak.id}`,
