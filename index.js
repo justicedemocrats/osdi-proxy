@@ -25,7 +25,9 @@ log('Running with crm %s', config.route)
 /*
  * Attach the app specified by environment variables
  */
-app.use(config.route, simpleApp(config.crud(config)))
+app.use(config.route + '-simple', simpleApp(config.crud(config)))
+app.use(config.route + '-osdi', osdiApp(config.crud(config), config))
+// app.use(config.route + '-gql', simpleApp(config.crud(config)))
 
 // And 404s just in case
 app.use((req, res) => res.status(404).send('404'))

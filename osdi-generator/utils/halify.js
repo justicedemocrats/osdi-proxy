@@ -30,7 +30,7 @@ e.collection = (r, req, {count, docs}) => {
   const embedded = []
 
   docs.forEach(d => {
-    links.push(hrefify(config.baseUrl + req.baseUrl + '/' + d.uuid))
+    links.push(hrefify(config.baseUrl + req.baseUrl + '/' + d.id))
     embedded.push(Object.assign(d, {
       _links: /* TODO - build links from a resource */ {}
     }))

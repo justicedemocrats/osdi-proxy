@@ -1,4 +1,4 @@
-const log = require('debug')('swimmy:error')
+const log = require('debug')('osdi-proxy:error')
 
 const print = string => {
   log(string)
