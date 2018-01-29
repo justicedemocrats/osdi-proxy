@@ -211,10 +211,6 @@ const configureBsdify = (api, config) => async (
     ? moment(existing.start_dt + 'Z').tz(time_zone)
     : moment()
 
-  console.log(existing.start_dt)
-  console.log(osdi.start_date)
-  console.log(time_zone)
-
   const base = {
     attendee_volunteer_message:
       osdi.status || osdi.tags ? JSON.stringify(metadata) : undefined,
