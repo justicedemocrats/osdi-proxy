@@ -240,9 +240,7 @@ const configureBsdify = (api, config) => async (
         : undefined,
 
     local_timezone: osdi.start_date ? time_zone : undefined,
-    start_tz: osdi.start_date
-      ? moment.tz.zone(time_zone).abbr(new Date())
-      : undefined,
+    start_tz: osdi.start_date ? time_zone : undefined,
     venue_name: osdi.location ? osdi.location.venue : undefined,
     venue_directions: osdi.instructions,
     venue_addr1:
