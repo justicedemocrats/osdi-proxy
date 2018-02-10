@@ -7,6 +7,8 @@ const isInPast = ev => {
   const time_zone = zipcode_to_timezone.lookup(ev.location.postal_code);
   const now = moment();
   const start = moment.tz(ev.start_date, time_zone);
+  console.log(start)
+  console.log(now)
   return start.unix() < now.unix();
 };
 
