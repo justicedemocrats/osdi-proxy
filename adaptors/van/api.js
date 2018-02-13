@@ -1,20 +1,36 @@
-const request = require('superagent')
+const request = require("superagent");
 
-const ensureEndingSlash = url => (url.endsWith('/') ? url : `${url}/`)
-const ensureNoBeginningSlash = url => (url.startsWith('/') ? url.slice(1) : url)
-const ensureNoBeginningRest = url => url.replace('/rest/v1/', '')
-
-const ensureSlashes = url => ensureEndingSlash(ensureNoBeginningSlash(ensureNoBeginningRest(url)))
-
-module.exports = ({ base, username, password }) => {
-  const processUrl = url => {
-    return `${base}${ensureSlashes(url)}`
-  }
+const standard = ({ mode, key, application_name }) => {
+  const base_url = "https://api.securevan.com/v4/";
+  const api_key = `${key}|${
+    {
+      voterfile: 0,
+      mycampaign: 1
+    }[mode]
+  }`;
 
   return {
-    get: url => request.get(processUrl(url)).auth(username, password),
-    post: url => request.post(processUrl(url)).auth(username, password),
-    put: url => request.put(processUrl(url)).auth(username, password),
-    delete: url => request.delete(processUrl(url)).auth(username, password)
-  }
-}
+    get: url => request.get(base_url + url).auth(application_name, api_key),
+    post: url => request.post(base_url + url).auth(application_name, api_key),
+    put: url => request.put(base_url + url).auth(application_name, api_key),
+    delete: url =>
+      request.delete(base_url + url).auth(application_name, api_key)
+  };
+};
+
+const osdi = ({ mode, key, application_name }) => {
+  const base_url = "https://osdi.ngpvan.com/api/v1/";
+  const api_key = `${key}|${
+    {
+      voterfile: 0,
+      mycampaign: 1
+    }[mode]
+  }`;
+
+  return {
+    get: url => request.get(base_url + url).set("OSDI-API-Token", api_key),
+    post: url => request.post(base_url + url).set("OSDI-API-Token", api_key),
+    put: url => request.put(base_url + url).set("OSDI-API-Token", api_key),
+    delete: url => request.delete(base_url + url).set("OSDI-API-Token", api_key)
+  };
+};
