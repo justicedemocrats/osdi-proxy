@@ -76,9 +76,9 @@ By CRM
     * [ ] .delete
     * [ ] Filtering
   * [ ] Events
-    * [ ] .one
-    * [ ] .count
-    * [ ] .findAll
+    * [x] .one
+    * [x] .count
+    * [x] .findAll
     * [ ] .edit
     * [ ] .create
     * [ ] .delete

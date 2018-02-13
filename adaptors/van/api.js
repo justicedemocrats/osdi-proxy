@@ -34,3 +34,8 @@ const osdi = ({ mode, key, application_name }) => {
     delete: url => request.delete(base_url + url).set("OSDI-API-Token", api_key)
   };
 };
+
+module.exports = config => ({
+  standard: standard(config),
+  osdi: config
+});
