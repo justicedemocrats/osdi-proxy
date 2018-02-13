@@ -12,6 +12,10 @@ const config = {
     name: process.env.VAN_DEFAULT_CONTACT_NAME
   },
   crud: require("../adaptors/van"),
+  resource_map: {
+    events: []
+  },
+  route: "van",
   validate: () =>
     [
       "VAN_API_KEY",

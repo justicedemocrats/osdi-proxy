@@ -1,10 +1,9 @@
 const secret = process.env.OSDI_API_TOKEN;
 
 module.exports = (req, res, next) => {
-  if (
-    req.headers["OSDI-API-Token"] &&
-    req.headers["OSDI-API-Token"] == secret
-  ) {
+  const header = req.headers["OSDI-API-Token"] || req.headers["osdi-api-token"];
+
+  if ((header && header == secret) || req.path == "/") {
     return next();
   } else {
     const error = req.headers["OSDI-API-Token"]

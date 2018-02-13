@@ -11,7 +11,7 @@ module.exports = (api, config) => {
 
   const one = async id => {
     const result = await api.standard
-      .get(`event/${id}`)
+      .get(`events/${id}`)
       .query(default_event_query);
 
     return await osdify(result.body);

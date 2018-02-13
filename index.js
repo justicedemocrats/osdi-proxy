@@ -4,12 +4,10 @@ const bodyParser = require("body-parser");
 const app = express();
 const http = require("http");
 const log = require("debug")("osdi-proxy:");
-// const osdi = require('./generator')
+const osdiApp = require("./hal-generator");
 const simpleApp = require("./simple-app");
 const config = require("./config");
 const secret = require("./secret");
-
-app.use(express.static("static"));
 
 /*
  * Set up global middlewares
@@ -27,7 +25,10 @@ log("Running with crm %s", config.route);
 /*
  * Attach the app specified by environment variables
  */
-app.use(config.route, simpleApp(config.crud(config)));
+app.use(`${config.route}/simple`, simpleApp(config.crud(config)));
+app.use(`${config.route}/osdi`, osdiApp(config.crud(config), config));
+
+app.use(express.static("static"));
 
 // And 404s just in case
 app.use((req, res) => res.status(404).send("404"));
