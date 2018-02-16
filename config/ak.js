@@ -1,11 +1,11 @@
 const log = require("debug")("osdi-proxy:ak:");
 
 const config = {
+  page_size: 100,
   base: process.env.AK_BASE,
   username: process.env.AK_USERNAME,
   password: process.env.AK_PASSWORD,
   defaultCampaign: process.env.AK_DEFAULT_CAMPAIGN,
-  page_size: 50,
   eventUrlBase: "https://go.justicedemocrats.com/event/event",
   crud: require("../adaptors/actionkit"),
   resource_map: {
