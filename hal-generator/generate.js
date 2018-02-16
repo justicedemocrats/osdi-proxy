@@ -47,7 +47,7 @@ module.exports = (resource, all_clients, config) => {
     log("PUT /%s", req.params.id);
 
     client
-      .edit(req.params.id)
+      .edit(req.params.id, req.body)
       .then(result => res.json(halify.object(resource, req, result, config)))
       .catch(handleError(res));
   });
