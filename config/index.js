@@ -15,4 +15,7 @@ if (!adaptors.includes(selection)) {
 
 options[selection].validate();
 
-module.exports = Object.assign(options[selection], { route: `/${selection}` });
+module.exports = Object.assign(options[selection], {
+  route: `/${selection}`,
+  baseUrl: process.env.BASE_URL
+});
