@@ -17,7 +17,7 @@ module.exports = api => ({
   count: async params => {
     const event_id = params.event || params.events;
     return await cacher.fetch_and_update(
-      `count-attendances-${event_id}`,
+      `count-${event_id}`,
       (async () => {
         const result = await api.get("eventsignup").query({ event: event_id });
         return result.body.meta.total_count;
@@ -27,11 +27,12 @@ module.exports = api => ({
 
   findAll: async params => {
     const page = (params && params.page) || 0;
+    const event_id = params.event || params.events;
     const reference = `all-${page}`;
 
     const results = await api
       .get("eventsignup")
-      .query({ event: params.event, _offset: 100 * page, _limit: 100 });
+      .query({ event: event_id, _offset: 100 * page, _limit: 100 });
 
     return await Promise.all(
       results.body.objects.map(obj => osdiify(api, obj))
