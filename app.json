@@ -1,0 +1,90 @@
+{
+  "name": "OSDI Proxy Layer",
+  "description":
+    "A proxy of the OSDI API for ActionKit, Blue State Digital, or VAN",
+  "repository": "https://github.com/justicedemocrats/osdi-proxy",
+  "keywords": ["osdi", "politics", "crm", "proxy"],
+  "addons": ["heroku-redis"],
+  "env": {
+    "USE_CRM": {
+      "description": "Which crm to use? Should be one of 'bsd', 'ak', or 'van'",
+      "required": true
+    },
+    "SYSTEM_NAME": {
+      "description":
+        "Please name this system for internal reference (my actionkit proxy)",
+      "required": true
+    },
+    "READ_ONLY": {
+      "description":
+        "Whether to make this proxy read only. If true, all POSTs, PUTs, and DELETEs are disallowed.",
+      "required": true,
+      "value": false
+    },
+    "PROXY_BASE_URL": {
+      "description": "What url will this be deployed at?",
+      "required": true
+    },
+    "OSDI_API_TOKEN": {
+      "description":
+        "The API token used to authenticate requests to this server",
+      "generator": "secret"
+    },
+    "AK_BASE": {
+      "description":
+        "If using ActionKit, what's your base url? (https://something.my-organization.com/rest/v1/)"
+    },
+    "AK_USERNAME": {
+      "description": "If using ActionKit, what's your username with API access?"
+    },
+    "AK_PASSWORD": {
+      "description":
+        "If using ActionKit, what's your password for the above username?"
+    },
+    "AK_DEFAULT_CAMPAIGN": {
+      "description":
+        "If using ActionKit, what campaign should new events be created for?"
+    },
+    "AK_EVENT_URL_BASE": {
+      "description":
+        "If using ActionKit, what's the base url for your events? (https://something.my-organization.com/campaign/event/)"
+    },
+    "BSD_BASE": {
+      "description":
+        "If using BSD, what's your base slug? (myorganiation.cp.bsd.net)"
+    },
+    "BSD_APP_ID": {
+      "description": "If using BSD, what's your application id?"
+    },
+    "BSD_APP_KEY": {
+      "description": "If using BSD, what's the key for that application?"
+    },
+    "BSD_EVENT_URL_BASE": {
+      "description":
+        "If using BSD, what's the base url for events? (https://secure.myorganization.com/page/event/detail/"
+    },
+    "VAN_API_KEY": {
+      "description": "If using VAN, what's your API key?"
+    },
+    "VAN_MODE": {
+      "description":
+        "If using VAN, what mode will you be using it in? (Must be one of 'voterfile' or 'mycampaign'"
+    },
+    "VAN_APP_NAME": {
+      "description":
+        "If using VAN, what is the application name corresponding to your API key?"
+    },
+    "VAN_DEFAULT_CONTACT_EMAIL": {
+      "description":
+        "If using VAN, what would you like the contact email to be for an event host if one is not present?"
+    },
+    "VAN_DEFAULT_CONTACT_PHONE": {
+      "description":
+        "If using VAN, what would you like the contact phone to be for an event host if one is not present?"
+    },
+    "VAN_DEFAULT_CONTACT_NAME": {
+      "description":
+        "If using VAN, what would you like the contact name to be for an event host if one is not present?"
+    }
+  }
+}

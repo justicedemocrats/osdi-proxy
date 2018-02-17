@@ -64,7 +64,7 @@ module.exports = (resource, all_clients, config) => {
   });
 
   linked_resources.forEach(lr => {
-    const lr_client = config.crud[lr];
+    const lr_client = all_clients[lr];
 
     app.get(`/:id/${lr}`, paginate, (req, res) => {
       log(`GET /${lr}`);

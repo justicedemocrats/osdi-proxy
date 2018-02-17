@@ -4,7 +4,7 @@ const config = {
   base: process.env.BSD_BASE,
   app_id: process.env.BSD_APP_ID,
   app_key: process.env.BSD_APP_KEY,
-  browser_url_base: process.env.BSD_BROWSER_URL_BASE,
+  browser_url_base: process.env.BSD_EVENT_URL_BASE,
   page_size: 500,
   resource_map: {
     people: [],

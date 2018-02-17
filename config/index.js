@@ -17,5 +17,6 @@ options[selection].validate();
 
 module.exports = Object.assign(options[selection], {
   route: `/${selection}`,
-  baseUrl: process.env.BASE_URL
+  baseUrl: process.env.PROXY_BASE_URL,
+  readOnly: process.env.READ_ONLY == "true"
 });
