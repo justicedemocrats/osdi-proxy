@@ -49,7 +49,7 @@ const configureOsdify = (api, config) => {
       description: event.description,
       start_date: event.startDate,
       end_date: event.endDate,
-      type: event.eventType.name,
+      type: event.eventType.name.trim(),
       location: {
         public: event.isPubliclyViewable,
         venue: first_location.name,
