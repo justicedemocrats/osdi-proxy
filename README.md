@@ -2,6 +2,8 @@
 
 Goal: An adapter for the OSDI spec for every CRM.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 # Roadmap
 
 General
