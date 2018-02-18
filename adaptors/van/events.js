@@ -42,7 +42,9 @@ const configureOsdify = (api, config) => {
     const first_host = config.defaultContact;
     // event.roles.filter(r => r.isEventLead)[0] || config.defaultContact;
 
-    const first_location = (event.locations && [0]) || { geoLocation: {} };
+    const first_location = (event.locations && event.locations[0]) || {
+      geoLocation: {}
+    };
 
     return {
       title: event.name,
