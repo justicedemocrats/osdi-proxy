@@ -124,7 +124,9 @@ function configureOsdify(api, config) {
 
     return {
       id: ak.id,
-      identifiers: [`actionkit:${ak.id}`],
+      identifiers: (getEventField(ak, "identifiers") || []).concat([
+        `actionkit:${ak.id}`
+      ]),
       capacity: ak.max_attendees,
       location: {
         public: getEventField(ak, "location_public", false),
@@ -253,7 +255,8 @@ function configureAkify(api, config) {
       field_contact_phone_number: osdi.contact
         ? osdi.contact.phone_number
         : undefined,
-      field_contact_name: osdi.contact ? osdi.contact.name : undefined
+      field_contact_name: osdi.contact ? osdi.contact.name : undefined,
+      field_identifiers: osdi.identifiers
     });
 
     return result;
