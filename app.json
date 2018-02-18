@@ -28,63 +28,80 @@
     "OSDI_API_TOKEN": {
       "description":
         "The API token used to authenticate requests to this server",
-      "generator": "secret"
+      "generator": "secret",
+      "required": false
     },
     "AK_BASE": {
       "description":
-        "If using ActionKit, what's your base url? (https://something.my-organization.com/rest/v1/)"
+        "If using ActionKit, what's your base url? (https://something.my-organization.com/rest/v1/)",
+      "required": false
     },
     "AK_USERNAME": {
-      "description": "If using ActionKit, what's your username with API access?"
+      "description":
+        "If using ActionKit, what's your username with API access?",
+      "required": false
     },
     "AK_PASSWORD": {
       "description":
-        "If using ActionKit, what's your password for the above username?"
+        "If using ActionKit, what's your password for the above username?",
+      "required": false
     },
     "AK_DEFAULT_CAMPAIGN": {
       "description":
-        "If using ActionKit, what campaign should new events be created for?"
+        "If using ActionKit, what campaign should new events be created for?",
+      "required": false
     },
     "AK_EVENT_URL_BASE": {
       "description":
-        "If using ActionKit, what's the base url for your events? (https://something.my-organization.com/campaign/event/)"
+        "If using ActionKit, what's the base url for your events? (https://something.my-organization.com/campaign/event/)",
+      "required": false
     },
     "BSD_BASE": {
       "description":
-        "If using BSD, what's your base slug? (myorganiation.cp.bsd.net)"
+        "If using BSD, what's your base slug? (myorganiation.cp.bsd.net)",
+      "required": false
     },
     "BSD_APP_ID": {
-      "description": "If using BSD, what's your application id?"
+      "description": "If using BSD, what's your application id?",
+      "required": false
     },
     "BSD_APP_KEY": {
-      "description": "If using BSD, what's the key for that application?"
+      "description": "If using BSD, what's the key for that application?",
+      "required": false
     },
     "BSD_EVENT_URL_BASE": {
       "description":
-        "If using BSD, what's the base url for events? (https://secure.myorganization.com/page/event/detail/"
+        "If using BSD, what's the base url for events? (https://secure.myorganization.com/page/event/detail/",
+      "required": false
     },
     "VAN_API_KEY": {
-      "description": "If using VAN, what's your API key?"
+      "description": "If using VAN, what's your API key?",
+      "required": false
     },
     "VAN_MODE": {
       "description":
-        "If using VAN, what mode will you be using it in? (Must be one of 'voterfile' or 'mycampaign'"
+        "If using VAN, what mode will you be using it in? (Must be one of 'voterfile' or 'mycampaign'",
+      "required": false
     },
     "VAN_APP_NAME": {
       "description":
-        "If using VAN, what is the application name corresponding to your API key?"
+        "If using VAN, what is the application name corresponding to your API key?",
+      "required": false
     },
     "VAN_DEFAULT_CONTACT_EMAIL": {
       "description":
-        "If using VAN, what would you like the contact email to be for an event host if one is not present?"
+        "If using VAN, what would you like the contact email to be for an event host if one is not present?",
+      "required": false
     },
     "VAN_DEFAULT_CONTACT_PHONE": {
       "description":
-        "If using VAN, what would you like the contact phone to be for an event host if one is not present?"
+        "If using VAN, what would you like the contact phone to be for an event host if one is not present?",
+      "required": false
     },
     "VAN_DEFAULT_CONTACT_NAME": {
       "description":
-        "If using VAN, what would you like the contact name to be for an event host if one is not present?"
+        "If using VAN, what would you like the contact name to be for an event host if one is not present?",
+      "required": false
     }
   }
 }
