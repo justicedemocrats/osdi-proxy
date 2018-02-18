@@ -124,7 +124,7 @@ function configureOsdify(api, config) {
 
     return {
       id: ak.id,
-      identifiers: (getEventField(ak, "identifiers") || []).concat([
+      identifiers: JSON.parse(getEventField(ak, "identifiers") || "[]").concat([
         `actionkit:${ak.id}`
       ]),
       capacity: ak.max_attendees,
@@ -257,6 +257,8 @@ function configureAkify(api, config) {
         : undefined,
       field_contact_name: osdi.contact ? osdi.contact.name : undefined,
       field_identifiers: osdi.identifiers
+        ? JSON.stringify(osdi.identifiers)
+        : undefined
     });
 
     return result;
