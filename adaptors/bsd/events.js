@@ -308,7 +308,7 @@ module.exports = (api, config) => {
   };
 
   const findAll = async params => {
-    if (params && params.page > 0) {
+    if (params.page > 0) {
       return [];
     }
 

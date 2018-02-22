@@ -31,7 +31,11 @@ module.exports = api => ({
 
     const results = await api
       .get("eventsignup")
-      .query({ event: event_id, _offset: 100 * params.page, _limit: 100 });
+      .query({
+        event: event_id,
+        _offset: 100 * (params.page - 1),
+        _limit: 100
+      });
 
     return await Promise.all(
       results.body.objects.map(obj => osdiify(api, obj))
