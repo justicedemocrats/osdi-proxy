@@ -13,7 +13,7 @@ module.exports = (api, config) => {
   };
 
   const findAll = async params => {
-    const reference = `all-${page}`;
+    const reference = `all-${params.page}`;
 
     return await cacher.fetch_and_update(
       reference,
