@@ -8,18 +8,20 @@ e.collection = (r, req, { count, docs }, config) => {
     total_records: count,
     total_pages: Math.ceil(count / config.page_size),
     per_page: config.page_size,
-    page: req.page,
+    page: req.query.page,
     _links: {},
     _embedded: {}
   };
 
-  if (req.page < hal.total_pages)
+  if (req.query.page < hal.total_pages)
     hal._links.next = hrefify(
-      config.baseUrl + setUrlParam(req.originalUrl, { page: req.page + 1 })
+      config.baseUrl +
+        setUrlParam(req.originalUrl, { page: req.query.page + 1 })
     );
-  if (req.page > 1)
+  if (req.query.page > 1)
     hal._links.prev = hrefify(
-      config.baseUrl + setUrlParam(req.originalUrl, { page: req.page - 1 })
+      config.baseUrl +
+        setUrlParam(req.originalUrl, { page: req.query.page - 1 })
     );
 
   const links = [];

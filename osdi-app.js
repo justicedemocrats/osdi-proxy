@@ -5,16 +5,14 @@ module.exports = (client, config) => {
 
   app.get("/events", async (req, res) => {
     try {
-      const page = req.query.page || 0;
-
       const [total_records, records] = await Promise.all([
         client.count(),
-        client.findAll({ page })
+        client.findAll({ page: req.query.page })
       ]);
 
       return res.json({
         total_records,
-        page,
+        page: req.query.page,
         per_page: config.page_size,
         total_pages: Math.ceil(total_records / config.page_size),
         _links: records.map(r => `${config.deployed_url}/events/${e.id}`),
@@ -69,7 +67,7 @@ module.exports = (client, config) => {
     try {
       const result = await client.attendances.findAll({
         event: req.params.id,
-        page: req.query.page || 0
+        page: req.query.page
       });
       return res.json(result);
     } catch (ex) {

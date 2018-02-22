@@ -18,10 +18,9 @@ module.exports = (api, config) => {
   };
 
   const findAll = async params => {
-    const page = (params && params.page) || 0;
     const page_query = {
       $top: config.page_size,
-      $skip: config.page_size * page
+      $skip: config.page_size * params.page
     };
 
     const result = await api.standard
