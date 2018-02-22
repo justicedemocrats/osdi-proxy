@@ -71,7 +71,8 @@ const configureOsdify = (api, config) => {
       id: event.eventId,
       identifiers: [`${config.system_name}:${event.eventId}`],
       instructions: null,
-      status: event.isActive ? "confirmed" : "tentative"
+      status: event.isActive ? "confirmed" : "tentative",
+      tags: []
     };
   };
 };
