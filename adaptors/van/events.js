@@ -36,13 +36,11 @@ module.exports = (api, config) => {
 
 const configureOsdify = (api, config) => {
   return async function osdify(event) {
-    console.log(event);
-
-    const first_host = config.defaultContact;
-    // event.roles.filter(r => r.isEventLead)[0] || config.defaultContact;
+    const first_host =
+      event.roles.filter(r => r.isEventLead)[0] || config.defaultContact;
 
     const first_location = (event.locations && event.locations[0]) || {
-      geoLocation: {}
+      address: {}
     };
 
     return {
@@ -54,17 +52,20 @@ const configureOsdify = (api, config) => {
       location: {
         public: event.isPubliclyViewable,
         venue: first_location.name,
-        address_lines: [
-          first_location.addressLine1,
-          first_location.addressLine2
-        ],
-        locality: first_location.city,
-        region: first_location.stateOrProvince,
-        postal_code: first_location.zipOrPostalCode,
-        location: {
-          latitude: first_location.geoLocation.lat,
-          longitude: first_location.geoLocation.lon
-        }
+        address_lines: [first_location.address.addressLine1].concat(
+          first_location.address.addressLine2
+            ? [first_location.address.addressLine2]
+            : []
+        ),
+        locality: first_location.address.city,
+        region: first_location.address.stateOrProvince,
+        postal_code: first_location.address.zipOrPostalCode,
+        location: first_location.address.geoLocation
+          ? {
+              latitude: first_location.address.geoLocation.lat,
+              longitude: first_location.address.geoLocation.lon
+            }
+          : null
       },
       contact: first_host,
       id: event.eventId,
