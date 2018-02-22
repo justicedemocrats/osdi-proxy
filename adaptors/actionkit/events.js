@@ -143,8 +143,10 @@ function configureOsdify(api, config) {
       browser_url: config.eventUrlBase + `/${ak.id}`,
       name: ak.title ? ak.title.toLowerCase().replace(/ /g, "-") : undefined,
       title: ak.title,
-      start_date: ak.starts_at,
-      end_date: ak.ends_at,
+      start_date: time_zone
+        ? moment.tz(ak.starts_at, time_zone).format()
+        : ak.starts_at,
+      end_date: time_zone ? moment.tz(ak.ends_at, time_zone) : ak.ends_at,
       attendance_count: attendance_count,
       description: ak.public_description,
       instructions: ak.directions,
