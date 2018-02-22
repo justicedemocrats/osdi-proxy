@@ -13,7 +13,6 @@ module.exports = (api, config) => {
   };
 
   const findAll = async params => {
-    const page = (params && params.page) || 0;
     const reference = `all-${page}`;
 
     return await cacher.fetch_and_update(
@@ -21,7 +20,7 @@ module.exports = (api, config) => {
       (async () => {
         const result = await api
           .get("event")
-          .query({ _offset: page * 100, _limit: 100 });
+          .query({ _offset: (params.page - 1) * 100, _limit: 100 });
 
         const { objects } = result.body;
 
