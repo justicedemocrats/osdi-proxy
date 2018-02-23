@@ -27,15 +27,13 @@ module.exports = api => ({
 
   findAll: async params => {
     const event_id = params.event || params.events;
-    const reference = `all-${page}`;
+    const reference = `all-${params.page}`;
 
-    const results = await api
-      .get("eventsignup")
-      .query({
-        event: event_id,
-        _offset: 100 * (params.page - 1),
-        _limit: 100
-      });
+    const results = await api.get("eventsignup").query({
+      event: event_id,
+      _offset: 100 * (params.page - 1),
+      _limit: 100
+    });
 
     return await Promise.all(
       results.body.objects.map(obj => osdiify(api, obj))
