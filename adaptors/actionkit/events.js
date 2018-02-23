@@ -152,7 +152,7 @@ function configureOsdify(api, config) {
         ? null
         : time_zone && time_zone != ""
           ? moment.tz(ak.ends_at, time_zone).format() == "Invalid  date"
-            ? moment.tz(ak.ends_at, "America/Los_Angeles").format()
+            ? null
             : moment.tz(ak.ends_at, time_zone).format()
           : ak.ends_at,
 
