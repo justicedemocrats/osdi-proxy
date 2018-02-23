@@ -156,6 +156,8 @@ function configureOsdify(api, config) {
             : moment.tz(ak.ends_at, time_zone).format()
           : ak.ends_at,
 
+      created_date: new Date(ak.created_at).toISOString(),
+
       attendance_count: attendance_count,
       description: ak.public_description,
       instructions: ak.directions,

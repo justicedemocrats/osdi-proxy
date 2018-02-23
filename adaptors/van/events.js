@@ -51,6 +51,7 @@ const configureOsdify = (api, config) => {
       description: event.description,
       start_date: event.startDate,
       end_date: event.endDate,
+      created_date: event.createdDate,
       type: event.eventType.name.trim(),
       location: {
         public: event.isPubliclyViewable,
