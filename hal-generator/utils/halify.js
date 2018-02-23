@@ -6,7 +6,7 @@ const e = {};
 e.collection = (r, req, { count, docs }, config) => {
   const hal = {
     total_records: count,
-    total_pages: Math.ceil(count / config.page_size),
+    total_pages: Math.max(Math.ceil(count / config.page_size), 1),
     per_page: config.page_size,
     page: req.query.page,
     _links: {},
