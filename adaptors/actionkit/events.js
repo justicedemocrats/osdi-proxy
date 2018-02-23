@@ -148,8 +148,9 @@ function configureOsdify(api, config) {
         time_zone && time_zone != ""
           ? moment.tz(ak.starts_at, time_zone).format()
           : ak.starts_at,
-      end_date:
-        time_zone && time_zone != ""
+      end_date: ak.ends_at
+        ? null
+        : time_zone && time_zone != ""
           ? moment.tz(ak.ends_at, time_zone).format()
           : ak.ends_at,
 
