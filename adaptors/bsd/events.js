@@ -301,20 +301,13 @@ module.exports = (api, config) => {
   const bsdify = configureBsdify(api, config);
 
   const count = async () => {
-    const bsdEvents = await api.searchEvents({
-      date_start: "2000-01-01 00:00:00"
-    });
-
-    return bsdEvents.length;
+    const events = await cacher.get(`all-1`);
+    return events.length;
   };
 
   const findAll = async params => {
-    if (params.page > 0) {
-      return [];
-    }
-
     return await cacher.fetch_and_update(
-      "all",
+      `all-${params.page}`,
       (async () => {
         // Fetch all events
         const events = await fetchAllEvents(api);
