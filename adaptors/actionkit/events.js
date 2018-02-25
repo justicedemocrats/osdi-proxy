@@ -137,9 +137,10 @@ function configureOsdify(api, config) {
         location: {
           latitude: ak.latitude,
           longitude: ak.longitude
-        }
+        },
+        time_zone: time_zone
       },
-      time_zone: time_zone,
+
       browser_url: config.eventUrlBase + `/${ak.id}`,
       name: ak.title ? ak.title.toLowerCase().replace(/ /g, "-") : undefined,
       title: ak.title,
