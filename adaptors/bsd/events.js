@@ -7,8 +7,6 @@ const isInPast = ev => {
   const time_zone = zipcode_to_timezone.lookup(ev.location.postal_code);
   const now = moment();
   const start = moment.tz(ev.start_date, time_zone);
-  console.log(start);
-  console.log(now);
   return start.unix() < now.unix();
 };
 
@@ -357,7 +355,7 @@ module.exports = (api, config) => {
       e => e.event_id_obfuscated == result.event_id_obfuscated
     )[0];
 
-    findAll();
+    findAll({ page: 0 });
     return await osdiify(created);
   };
 
@@ -370,13 +368,13 @@ module.exports = (api, config) => {
     const existing = matches[0];
     const bsdified = await bsdify(edits, existing);
     const result = await api.updateEvent(bsdified);
-    findAll();
+    findAll({ page: 0 });
     return result;
   };
 
   const doDelete = async id => {
     const result = await api.deleteEvent(id);
-    findAll();
+    findAll({ page: 0 });
     return result;
   };
 

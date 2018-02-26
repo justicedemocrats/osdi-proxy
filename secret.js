@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
   if ((header && header == secret) || req.path == "/") {
     return next();
   } else {
-    const error = req.headers["OSDI-API-Token"]
+    const error = header
       ? "Invalid OSDI-API-Token"
       : "Missing header OSDI-API-Token";
 

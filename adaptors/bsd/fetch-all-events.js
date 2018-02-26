@@ -1,10 +1,7 @@
 module.exports = async api => {
-  console.log(2);
   const events = await api.searchEvents({
     date_start: "2000-01-01 00:00:00"
   });
-
-  console.log(7);
 
   const ids = events.map(e => parseInt(e.event_id)).sort((a, b) => a - b);
   const min_id = ids[0];
@@ -36,8 +33,6 @@ module.exports = async api => {
       missing_events.push(array[0]);
     }
   });
-
-  console.log("33");
 
   /*
    * Search ahead
