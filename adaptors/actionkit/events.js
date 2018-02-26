@@ -151,10 +151,16 @@ function configureOsdify(api, config) {
           : ak.starts_at,
 
       end_date: !ak.ends_at
-        ? null
+        ? moment
+            .tz(ak.starts_at, time_zone)
+            .add(2, "hours")
+            .format()
         : time_zone && time_zone != ""
           ? moment.tz(ak.ends_at, time_zone).format() == "Invalid date"
-            ? null
+            ? moment
+                .tz(ak.starts_at, time_zone)
+                .add(2, "hours")
+                .format()
             : moment.tz(ak.ends_at, time_zone).format()
           : ak.ends_at,
 
