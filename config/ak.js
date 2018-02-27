@@ -10,7 +10,8 @@ const config = {
   crud: require("../adaptors/actionkit"),
   resource_map: {
     people: [],
-    events: ["attendances"]
+    events: ["attendances"],
+    lists: ["items"]
   },
   validate: () =>
     [

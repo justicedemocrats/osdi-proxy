@@ -1,10 +1,10 @@
-module.exports = (config) => {
-  const api = require('./api')(config)
-  const exports = {}
+module.exports = config => {
+  const api = require("./api")(config);
+  const exports = {};
 
-  'people events attendances'
-    .split(' ')
-    .forEach(key => (exports[key] = require(`./${key}`)(api, config)))
+  "people events attendances lists items"
+    .split(" ")
+    .forEach(key => (exports[key] = require(`./${key}`)(api, config)));
 
-  return exports
-}
+  return exports;
+};
