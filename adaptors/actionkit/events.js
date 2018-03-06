@@ -121,6 +121,25 @@ function configureOsdify(api, config) {
           ? "Europe/Madrid"
           : zipcode_to_timezone.lookup(ak.zip);
 
+    const contact_promise = getEventField(ak, "contact_email_address")
+      ? Promise.resolve({
+          email_address: getEventField(ak, "contact_email_address"),
+          phone_number: getEventField(ak, "contact_phone_number"),
+          name: getEventField(ak, "contact_name")
+        })
+      : (async () => {
+          const creator_id = ak.creator.split("/")[4];
+          const user = await api.get(`user/${creator_id}`);
+          const { email, first_name, last_name } = user.body;
+          return {
+            email_address: email,
+            phone_number: "",
+            name: `${first_name} ${last_name}`
+          };
+        })();
+
+    const contact = await contact_promise;
+
     return {
       id: ak.id,
       identifiers: JSON.parse(getEventField(ak, "identifiers") || "[]").concat([
@@ -181,11 +200,7 @@ function configureOsdify(api, config) {
       tags: getEventField(ak, "tags")
         ? JSON.parse(getEventField(ak, "tags"))
         : [],
-      contact: {
-        email_address: getEventField(ak, "contact_email_address"),
-        phone_number: getEventField(ak, "contact_phone_number"),
-        name: getEventField(ak, "contact_name")
-      }
+      contact: contact
     };
   };
 }
