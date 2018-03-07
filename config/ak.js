@@ -23,7 +23,7 @@ const config = {
       "AK_EVENT_URL_BASE"
     ].forEach(env => {
       if (!process.env[env]) {
-        log("[Error]: Missing env var %s – required for BSD adaptor", env);
+        log("[Error]: Missing env var %s – required for AK adaptor", env);
         process.exit();
       }
     })
