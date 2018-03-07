@@ -220,7 +220,7 @@ function filterUndefined(obj) {
 function akifyTime(string, time_zone) {
   const base_moment = moment(string);
 
-  if (base_moment._tzm !== undefined) {
+  if (base_moment._tzm !== undefined && base_moment._tzm !== 0) {
     const split = string.split("-");
     const without_last = split.slice(0, split.length - 1).join("-");
     return moment.tz(without_last, time_zone);
