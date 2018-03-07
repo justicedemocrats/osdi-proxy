@@ -143,7 +143,7 @@ function configureOsdify(api, config) {
     return {
       id: ak.id,
       identifiers: JSON.parse(getEventField(ak, "identifiers") || "[]").concat([
-        `actionkit:${ak.id}`
+        `${config.system_name || "actionkit"}:${ak.id}`
       ]),
       capacity: ak.max_attendees,
       location: {
