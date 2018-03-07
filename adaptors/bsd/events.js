@@ -76,7 +76,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
 
   return {
     id: bsd.event_id,
-    identifiers: [`bsd:${bsd.event_id}`],
+    identifiers: [`${config.system_name || "bsd"}:${bsd.event_id}`],
     capacity: bsd.capacity,
     attendance_count: bsd.attendee_count,
     location: {

@@ -5,6 +5,7 @@ const config = {
   app_id: process.env.BSD_APP_ID,
   app_key: process.env.BSD_APP_KEY,
   browser_url_base: process.env.BSD_EVENT_URL_BASE,
+  system_name: process.env.SYSTEM_NAME,
   page_size: 5000,
   resource_map: {
     people: [],

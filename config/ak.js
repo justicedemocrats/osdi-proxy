@@ -6,6 +6,7 @@ const config = {
   username: process.env.AK_USERNAME,
   password: process.env.AK_PASSWORD,
   defaultCampaign: process.env.AK_DEFAULT_CAMPAIGN,
+  system_name: process.env.SYSTEM_NAME,
   eventUrlBase: process.env.AK_EVENT_URL_BASE,
   crud: require("../adaptors/actionkit"),
   resource_map: {
