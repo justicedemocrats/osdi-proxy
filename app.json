@@ -103,7 +103,7 @@
         "If using VAN, what would you like the contact name to be for an event host if one is not present?",
       "required": false
     },
-    "ACTIONNETWORK_API_KEY": {
+    "ACTIONNETWORK_API_TOKEN": {
       "description": "If using Action Network, what is your API key?",
       "required": false
     }
