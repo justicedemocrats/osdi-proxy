@@ -17,7 +17,7 @@ General
 By CRM
 
 * [x] ActionNetwork. ActionNetwork already has an OSDI api. However, they have not
-      integrated (#293)[https://github.com/opensupporter/osdi-docs/pull/293], which adds
+      implemented [#293](https://github.com/opensupporter/osdi-docs/pull/293), which adds
       a contact hash. Since I was using that, I made an ActionNetwork wrapper here only
       around the events collection. Any other use case should use ActionNetwork's API
       directly.
