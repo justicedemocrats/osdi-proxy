@@ -21,7 +21,7 @@ module.exports = (api, config) => {
     return osdiify(result.body);
   };
 
-  return { count, findAll };
+  return { count, findAll, one };
 };
 
 const configureOsdify = (api, config) => async ak => {
