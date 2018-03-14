@@ -16,6 +16,11 @@ module.exports = (api, config) => {
     return final;
   };
 
+  const one = async id => {
+    const result = await api.get(`queryreport/${id}`);
+    return osdiify(result.body);
+  };
+
   return { count, findAll };
 };
 
