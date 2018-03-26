@@ -38,7 +38,7 @@ function configureOsdify(api, config) {
 
     return {
       id: nb.id,
-      identifiers: `${config.system_name || "nationbuilder"}:${nb.id}`,
+      identifiers: [`${config.system_name || "nationbuilder"}:${nb.id}`],
       status:
         {
           published: "confirmed",
