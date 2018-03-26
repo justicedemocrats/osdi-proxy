@@ -49,7 +49,7 @@ function configureOsdify(api, config) {
       start_date: nb.start_time,
       end_date: nb.end_date,
       capacity: nb.capacity,
-      browser_url: `${config.eventBaseUrl}${nb.path}`,
+      browser_url: `${config.eventUrlBase}${nb.path}`,
       location: {
         venue: nb.venue.name,
         address_lines: [
