@@ -32,12 +32,20 @@ function configureOsdify(api, config) {
   return async function osdiify(nb) {
     const time_zone = zipcode_to_timezone.lookup(nb.venue.address.zip5);
 
+    if (nb.status != "published") {
+      console.log(nb.status);
+    }
+
     return {
       id: nb.id,
       identifiers: `${config.system_name || "nationbuilder"}:${nb.id}`,
-      status: {
-        published: "confirmed"
-      }[nb.status],
+      status:
+        {
+          published: "confirmed",
+          deleted: "cancelled",
+          expired: "cancelled"
+        }[nb.status] || "tentative",
+
       title: nb.title,
       tags: nb.tags,
       description: nb.intro,
