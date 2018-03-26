@@ -1,5 +1,5 @@
 const log = require("debug")("osdi-proxy:");
-const adaptors = "bsd ak van an".split(" ");
+const adaptors = "bsd ak van an nb".split(" ");
 
 const options = adaptors.reduce(
   (acc, crm) => Object.assign(acc, { [crm]: require(`./${crm}`) }),

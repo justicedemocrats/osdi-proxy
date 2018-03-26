@@ -106,6 +106,25 @@
     "ACTIONNETWORK_API_TOKEN": {
       "description": "If using Action Network, what is your API key?",
       "required": false
+    },
+    "NATIONBUILDER_SLUG": {
+      "description":
+        "If using Nation Builder, what is your slug (myslug.nationbuilder.com)?",
+      "required": false
+    },
+    "NATIONBUILDER_ACCESS_TOKEN": {
+      "description":
+        "If using Nation Builder, what is your access token / API key?",
+      "required": false
+    },
+    "NATIONBUILDER_SITE": {
+      "description": "If using Nation Builder, what site are your events on?",
+      "required": false
+    },
+    "NATIONBUILDER_EVENT_URL_BASE": {
+      "description":
+        "If using Nation Builder, what is the base url for your events?",
+      "required": false
     }
   }
 }
