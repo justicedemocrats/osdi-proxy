@@ -16,7 +16,7 @@ module.exports = (api, config) => {
       (params.page - 1) * config.page_size,
       params.page * config.page_size
     );
-    return await Promise.all(page.slice(5, 10).map(osdiify));
+    return await Promise.all(page.map(osdiify));
   };
 
   const one = async id => {

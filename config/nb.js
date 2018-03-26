@@ -1,7 +1,7 @@
 const log = require("debug")("osdi-proxy:nb:");
 
 const config = {
-  page_size: 100,
+  page_size: 500,
   slug: process.env.NATIONBUILDER_SLUG,
   access_token: process.env.NATIONBUILDER_ACCESS_TOKEN,
   site: process.env.NATIONBUILDER_SITE,
