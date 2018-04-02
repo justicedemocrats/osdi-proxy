@@ -55,7 +55,7 @@ function configureOsdify(api, config) {
         email_address: nb.contact.email
       },
       start_date: nb.start_time,
-      end_date: nb.end_date,
+      end_date: nb.end_time,
       capacity: nb.capacity,
       browser_url: `${config.eventUrlBase}${nb.path}`,
       location: {
