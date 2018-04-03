@@ -36,8 +36,9 @@ module.exports = (api, config) => {
 
 const configureOsdify = (api, config) => {
   return async function osdify(event) {
-    const first_host =
-      event.roles.filter(r => r.isEventLead)[0] || config.defaultContact;
+    // const first_host =
+    //   event.roles.filter(r => r.isEventLead)[0] || config.defaultContact;
+    const first_host = config.defaultContact;
 
     const first_location =
       event.locations && event.locations[0] && event.locations[0].address
