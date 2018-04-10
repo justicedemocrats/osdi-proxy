@@ -1,9 +1,10 @@
 const moment = require("moment-timezone");
 const format = "YYYY-MM-DDTHH:mm:ss";
 const zipcode_to_timezone = require("zipcode-to-timezone");
-const cacher = require("../../lib").cacher("ak-event");
 
 module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(`${config.system_name}-ak-event`);
+
   const osdiify = configureOsdify(api, config);
   const akify = configureAkify(api, config);
 

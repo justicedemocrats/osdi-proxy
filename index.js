@@ -20,24 +20,28 @@ app.use(bodyParser.json());
  */
 app.use(secret);
 
-log("Running with crm %s", config.route);
-
 /*
  * Attach the app specified by environment variables
  */
-app.use(`${config.route}/simple`, simpleApp(config.crud(config)));
-app.use(`${config.route}/osdi`, osdiApp(config.crud(config), config));
 
-app.use(express.static("static"));
+config().then(configs => {
+  configs.forEach(config => {
+    log("Attaching CRM %s", config.route);
+    app.use(`${config.route}/simple`, simpleApp(config.crud(config)));
+    app.use(`${config.route}/osdi`, osdiApp(config.crud(config), config));
 
-// And 404s just in case
-app.use((req, res) => res.status(404).send("404"));
+    app.use(express.static("static"));
 
-/*
- * Get it started
- */
-const PORT = process.env.PORT || 3000;
-const server = http.createServer(app);
+    // And 404s just in case
+    app.use((req, res) => res.status(404).send("404"));
 
-server.listen(PORT);
-log("API listening on %d", PORT);
+    /*
+    * Get it started
+    */
+    const PORT = process.env.PORT || 3000;
+    const server = http.createServer(app);
+
+    server.listen(PORT);
+    log("API listening on %d", PORT);
+  });
+});

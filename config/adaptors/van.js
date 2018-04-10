@@ -1,17 +1,19 @@
 const log = require("debug")("osdi-proxy:van:");
 
-const config = {
+const config = env => ({
   page_size: 50,
-  system_name: process.env.SYSTEM_NAME,
-  application_name: process.env.VAN_APP_NAME,
-  key: process.env.VAN_API_KEY,
-  mode: process.env.VAN_MODE,
+  system_name: env.SYSTEM_NAME,
+  application_name: env.VAN_APP_NAME,
+  key: env.VAN_API_KEY,
+  mode: env.VAN_MODE,
+  baseUrl: env.PROXY_BASE_URL,
+  readOnly: env.READ_ONLY == "true",
   defaultContact: {
-    email_address: process.env.VAN_DEFAULT_CONTACT_EMAIL,
-    phone_number: process.env.VAN_DEFAULT_CONTACT_PHONE,
-    name: process.env.VAN_DEFAULT_CONTACT_NAME
+    email_address: env.VAN_DEFAULT_CONTACT_EMAIL,
+    phone_number: env.VAN_DEFAULT_CONTACT_PHONE,
+    name: env.VAN_DEFAULT_CONTACT_NAME
   },
-  crud: require("../adaptors/van"),
+  crud: require("../../adaptors/van"),
   resource_map: {
     events: []
   },
@@ -26,19 +28,19 @@ const config = {
       "VAN_DEFAULT_CONTACT_PHONE",
       "VAN_DEFAULT_CONTACT_NAME"
     ].forEach(env => {
-      if (!process.env[env]) {
+      if (!env[variable]) {
         log("[Error]: Missing env var %s – required for BSD adaptor", env);
         process.exit();
       }
 
       if (
-        env == "VAN_MODE" &&
-        !["voterfile", "mycampaign"].includes(process.env[env])
+        variable == "VAN_MODE" &&
+        !["voterfile", "mycampaign"].includes(env[variable])
       ) {
         log("[Error]: VAN_MODE must be one of 'voterfile', 'mycampaign'");
         process.exit();
       }
     })
-};
+});
 
 module.exports = config;

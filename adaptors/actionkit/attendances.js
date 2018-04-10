@@ -1,5 +1,3 @@
-const cacher = require("../../lib").cacher("ak-attendance");
-
 const osdiify = async (api, ak) => {
   return {
     attended: ak.attended,
@@ -13,53 +11,61 @@ const akify = async (api, osdi, config = {}) => {
   };
 };
 
-module.exports = api => ({
-  count: async params => {
-    const event_id = params.event || params.events;
-    return await cacher.fetch_and_update(
-      `count-${event_id}`,
-      (async () => {
-        const result = await api.get("eventsignup").query({ event: event_id });
-        return result.body.meta.total_count;
-      })()
-    );
-  },
+module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(
+    `${config.system_name}-ak-attendance`
+  );
 
-  findAll: async params => {
-    const event_id = params.event || params.events;
-    const reference = `all-${params.page}`;
+  return {
+    count: async params => {
+      const event_id = params.event || params.events;
+      return await cacher.fetch_and_update(
+        `count-${event_id}`,
+        (async () => {
+          const result = await api
+            .get("eventsignup")
+            .query({ event: event_id });
+          return result.body.meta.total_count;
+        })()
+      );
+    },
 
-    const results = await api.get("eventsignup").query({
-      event: event_id,
-      _offset: 100 * (params.page - 1),
-      _limit: 100
-    });
+    findAll: async params => {
+      const event_id = params.event || params.events;
+      const reference = `all-${params.page}`;
 
-    return await Promise.all(
-      results.body.objects.map(obj => osdiify(api, obj))
-    );
-  },
+      const results = await api.get("eventsignup").query({
+        event: event_id,
+        _offset: 100 * (params.page - 1),
+        _limit: 100
+      });
 
-  one: async id => {
-    return await cacher.fetch_and_update(
-      id,
-      (async () => {
-        const result = await api.get(`eventsignup${id}`);
-        return await osdiify(result);
-      })()
-    );
-  }
+      return await Promise.all(
+        results.body.objects.map(obj => osdiify(api, obj))
+      );
+    },
 
-  // create: async object => {
-  //   return await api.post('eventsignupaction').send(akify(object))
-  // },
-  //
-  // edit: async (id, edits) => {
-  //   const result = await api.put(`event/${id}`).send(akify(edits))
-  //   return osdiify(result)
-  // },
-  //
-  // delete: async id => {
-  //   return await api.put(`delete/${id}`)
-  // }
-});
+    one: async id => {
+      return await cacher.fetch_and_update(
+        id,
+        (async () => {
+          const result = await api.get(`eventsignup${id}`);
+          return await osdiify(result);
+        })()
+      );
+    }
+
+    // create: async object => {
+    //   return await api.post('eventsignupaction').send(akify(object))
+    // },
+    //
+    // edit: async (id, edits) => {
+    //   const result = await api.put(`event/${id}`).send(akify(edits))
+    //   return osdiify(result)
+    // },
+    //
+    // delete: async id => {
+    //   return await api.put(`delete/${id}`)
+    // }
+  };
+};

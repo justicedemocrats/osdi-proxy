@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/justicedemocrats/osdi-proxy#readme",
   "dependencies": {
+    "airtable": "^0.5.2",
     "body-parser": "^1.18.2",
     "debug": "^3.1.0",
     "express": "^4.16.2",

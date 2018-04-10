@@ -1,8 +1,9 @@
 const zipcode_to_timezone = require("zipcode-to-timezone");
-const cacher = require("../../lib").cacher("nb-event");
 const limit = 1000;
 
 module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(`${config.system_name}-nb-event`);
+
   const osdiify = configureOsdify(api, config);
 
   const count = async () => {

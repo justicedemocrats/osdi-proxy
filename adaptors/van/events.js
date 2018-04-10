@@ -1,7 +1,8 @@
-const cacher = require("../../lib").cacher("van-event");
 const default_event_query = { $expand: "locations,roles" };
 
 module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(`${config.system_name}-van-event`);
+
   const osdify = configureOsdify(api, config);
 
   const count = async () => {

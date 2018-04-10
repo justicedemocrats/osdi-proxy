@@ -1,5 +1,3 @@
-const cacher = require("../../lib").cacher("ak-people");
-
 const osdiify = async (api, ak) => {
   const phone_numbers = [];
   const phone_id = ak.phones[0] ? ak.phones[0].split("/")[4] : false;
@@ -29,14 +27,18 @@ const osdiify = async (api, ak) => {
   };
 };
 
-module.exports = api => ({
-  one: async id => {
-    return await cacher.fetch_and_update(
-      id,
-      (async () => {
-        const result = await api.get(`user/${id}`);
-        return await osdiify(api, result.body);
-      })()
-    );
-  }
-});
+module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(`${config.system_name}-ak-people`);
+
+  return {
+    one: async id => {
+      return await cacher.fetch_and_update(
+        id,
+        (async () => {
+          const result = await api.get(`user/${id}`);
+          return await osdiify(api, result.body);
+        })()
+      );
+    }
+  };
+};

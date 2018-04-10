@@ -1,7 +1,6 @@
 const moment = require("moment-timezone");
 const fetchAllEvents = require("./fetch-all-events");
 const zipcode_to_timezone = require("zipcode-to-timezone");
-const cacher = require("../../lib").cacher("bsd-event");
 
 const isInPast = ev => {
   const time_zone = zipcode_to_timezone.lookup(ev.location.postal_code);
@@ -295,6 +294,7 @@ const configureBsdify = (api, config) => async (
 };
 
 module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(`${config.system_name}-bsd-event`);
   const osdiify = configureOsdify(api, config);
   const bsdify = configureBsdify(api, config);
 
