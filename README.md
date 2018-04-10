@@ -21,7 +21,7 @@ https://proxy-server.com/jake-tapper-bsd/osdi -> a proxy of Jake Tapper's Blue S
 To set it up like this, right now, you must use Airtable. More configuration options could easily be built.
 To use Airtable configuration, you need to set `AIRTABLE_API_KEY`, `AIRTABLE_BASE`, and `AIRTABLE_TABLE`.
 
-The code additionally expects a table with these columns:
+The code additionally expects a table with these columns: ![airtable columns](https://raw.githubusercontent.com/justicedemocrats/osdi-proxy/master/airtable-column-screenshot.png)
 
 Where "Env" contains any CRM specific configuration.
 
