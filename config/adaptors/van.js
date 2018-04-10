@@ -17,7 +17,7 @@ const config = env => ({
   resource_map: {
     events: []
   },
-  route: "van",
+  route: env.SYSTEM_NAME || env.ROUTE,
   validate: () =>
     [
       "VAN_API_KEY",
@@ -27,9 +27,14 @@ const config = env => ({
       "VAN_DEFAULT_CONTACT_EMAIL",
       "VAN_DEFAULT_CONTACT_PHONE",
       "VAN_DEFAULT_CONTACT_NAME"
-    ].forEach(env => {
+    ].forEach(variable => {
       if (!env[variable]) {
-        log("[Error]: Missing env var %s – required for BSD adaptor", env);
+        log(
+          "[Error]: Missing env var %s – required for adaptor for %s",
+          variable,
+          env.SYSTEM_NAME
+        );
+
         process.exit();
       }
 
@@ -37,7 +42,10 @@ const config = env => ({
         variable == "VAN_MODE" &&
         !["voterfile", "mycampaign"].includes(env[variable])
       ) {
-        log("[Error]: VAN_MODE must be one of 'voterfile', 'mycampaign'");
+        log(
+          "[Error]: VAN_MODE must be one of 'voterfile', 'mycampaign' for system %s",
+          env.SYSTEM_NAME
+        );
         process.exit();
       }
     })

@@ -17,12 +17,14 @@ const config = env => ({
   crud: require("../../adaptors/bsd"),
   validate: () =>
     ["BSD_BASE", "BSD_APP_ID", "BSD_APP_KEY", "BSD_EVENT_URL_BASE"].forEach(
-      env => {
+      variable => {
         if (!env[variable]) {
           log(
-            "[Error]: Missing env var %s – required for BSD adaptor",
-            variable
+            "[Error]: Missing env var %s – required for adaptor for %s",
+            variable,
+            env.SYSTEM_NAME
           );
+
           process.exit();
         }
       }

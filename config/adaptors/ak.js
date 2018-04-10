@@ -26,7 +26,12 @@ const config = env => ({
       "AK_EVENT_URL_BASE"
     ].forEach(variable => {
       if (!env[variable]) {
-        log("[Error]: Missing env var %s – required for AK adaptor", variable);
+        log(
+          "[Error]: Missing env var %s – required for adaptor for %s",
+          variable,
+          env.SYSTEM_NAME
+        );
+
         process.exit();
       }
     })

@@ -12,9 +12,14 @@ const config = env => ({
     events: []
   },
   validate: () =>
-    ["SYSTEM_NAME", "ACTIONNETWORK_API_TOKEN"].forEach(env => {
+    ["SYSTEM_NAME", "ACTIONNETWORK_API_TOKEN"].forEach(variable => {
       if (!env[variable]) {
-        log("[Error]: Missing env var %s – required for AN adaptor", variable);
+        log(
+          "[Error]: Missing env var %s – required for adaptor for %s",
+          variable,
+          env.SYSTEM_NAME
+        );
+
         process.exit();
       }
     })
