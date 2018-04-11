@@ -27,8 +27,8 @@ app.use(secret);
 config().then(configs => {
   configs.forEach(config => {
     log("Attaching CRM %s", config.route);
-    app.use(`${config.route}/simple`, simpleApp(config.crud(config)));
-    app.use(`${config.route}/osdi`, osdiApp(config.crud(config), config));
+    app.use(`/${config.route}/simple`, simpleApp(config.crud(config)));
+    app.use(`/${config.route}/osdi`, osdiApp(config.crud(config), config));
   });
 
   app.use(express.static("static"));
