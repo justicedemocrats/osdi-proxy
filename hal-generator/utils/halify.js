@@ -15,12 +15,14 @@ e.collection = (r, req, { count, docs }, config) => {
 
   if (req.query.page < hal.total_pages)
     hal._links.next = hrefify(
-      config.baseUrl +
+      `https://` +
+        req.hostname +
         setUrlParam(req.originalUrl, { page: req.query.page + 1 })
     );
   if (req.query.page > 1)
     hal._links.prev = hrefify(
-      config.baseUrl +
+      `https://` +
+        req.hostname +
         setUrlParam(req.originalUrl, { page: req.query.page - 1 })
     );
 
