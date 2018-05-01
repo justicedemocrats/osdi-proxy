@@ -1,9 +1,17 @@
 const osdiify = async (api, ak) => {
+  let source = undefined;
+
+  if (ak.signupaction[0]) {
+    const signupaction_id = ak.signupaction[0].trim("/").split("/")[4];
+    const signupaction = await api.get(`eventsignupaction/${signupaction_id}`);
+    source = signupaction.body.source;
+  }
+
   return {
     attended: ak.attended,
     person: ak.user.split("/")[4],
     referrer_data: {
-      source: ak.source
+      source
     }
   };
 };
@@ -43,9 +51,11 @@ module.exports = (api, config) => {
         _limit: 100
       });
 
-      return await Promise.all(
+      const responses = await Promise.all(
         results.body.objects.map(obj => osdiify(api, obj))
       );
+
+      return responses;
     },
 
     one: async id => {
