@@ -14,7 +14,7 @@ const config = env => ({
   crud: require("../../adaptors/actionkit"),
   resource_map: {
     people: [],
-    events: ["attendances"],
+    events: ["attendances", "record_attendance_helper"],
     lists: ["items"]
   },
   validate: () =>

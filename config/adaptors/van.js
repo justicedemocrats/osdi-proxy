@@ -15,7 +15,7 @@ const config = env => ({
   },
   crud: require("../../adaptors/van"),
   resource_map: {
-    events: []
+    events: ["record_attendance_helper"]
   },
   route: env.SYSTEM_NAME || env.ROUTE,
   validate: () =>

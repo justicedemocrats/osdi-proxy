@@ -37,5 +37,5 @@ const osdi = ({ mode, key, application_name }) => {
 
 module.exports = config => ({
   standard: standard(config),
-  osdi: config
+  osdi: osdi(config)
 });

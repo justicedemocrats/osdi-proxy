@@ -30,11 +30,22 @@ e.collection = (r, req, { count, docs }, config) => {
   const embedded = [];
 
   docs.forEach(d => {
-    links.push(hrefify(`${config.baseUrl}${r}/${d.id}`));
+    links.push(hrefify(`${config.baseUrl}/${r}/${d.id}`));
+
     embedded.push(
-      Object.assign(d, {
-        _links: /* TODO - build links from a resource */ {}
-      })
+      d._links
+        ? d
+        : Object.assign(d, {
+            _links: config.resource_map[r].reduce(
+              (acc, lr) =>
+                Object.assign(acc, {
+                  [`osdi:${lr}`]: hrefify(
+                    `${config.baseUrl}/${r}/${d.id}/${lr}`
+                  )
+                }),
+              {}
+            )
+          })
     );
   });
 
@@ -46,8 +57,13 @@ e.collection = (r, req, { count, docs }, config) => {
 };
 
 e.object = (r, req, doc, config) => {
-  const _links = {};
-  // TODO - build resource links
+  const _links = config.resource_map[r].reduce(
+    (acc, lr) =>
+      Object.assign(acc, {
+        [`osdi:${lr}`]: hrefify(`${config.baseUrl}/${r}/${d.id}/${lr}`)
+      }),
+    {}
+  );
   return Object.assign(_links, doc);
 };
 
