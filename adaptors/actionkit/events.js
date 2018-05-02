@@ -194,9 +194,14 @@ function configureOsdify(api, config) {
         ak.status == "deleted"
           ? "cancelled"
           : ak.status == "cancelled"
-            ? ak.is_approved ? "cancelled" : "rejected"
-            : ak.is_approved ? "confirmed" : "tentative",
-
+            ? ak.is_approved
+              ? "cancelled"
+              : "rejected"
+            : ak.is_approved
+              ? ak.is_private
+                ? "hidden"
+                : "confirmed"
+              : "tentative",
       type: getEventField(ak, "type") || "Unknown",
       tags: getEventField(ak, "tags")
         ? JSON.parse(getEventField(ak, "tags"))
@@ -282,7 +287,9 @@ function configureAkify(api, config) {
       field_type: osdi.type,
       field_location_public:
         osdi.location !== undefined && osdi.location.public !== undefined
-          ? osdi.location.public ? 1 : 0
+          ? osdi.location.public
+            ? 1
+            : 0
           : undefined,
       host_is_confirmed: true,
       field_contact_email_address: osdi.contact
