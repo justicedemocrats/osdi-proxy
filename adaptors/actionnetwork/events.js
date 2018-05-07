@@ -1,4 +1,6 @@
 const moment = require("moment");
+const fetchAllEvents = require("./fetch-all-events");
+const _ = require("lodash");
 
 const transform_event = config => event => {
   const id = event.identifiers[0].split(":")[1];
@@ -25,13 +27,15 @@ const transform_event = config => event => {
 
 module.exports = (api, config) => {
   const count = async () => {
-    const result = await api.get("events");
-    return result.body.total_records;
+    const events = await fetchAllEvents(api);
+    const allEvents = events.map(transform_event(config));
+    return _.uniqBy(allEvents, "id").length;
   };
 
   const findAll = async params => {
-    const result = await api.get("events").query({ page: params.page });
-    return result.body._embedded["osdi:events"].map(transform_event(config));
+    const events = await fetchAllEvents(api);
+    const allEvents = events.map(transform_event(config));
+    return _.uniqBy(allEvents, "id");
   };
 
   return { count, findAll };

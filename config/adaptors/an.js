@@ -1,7 +1,7 @@
 const log = require("debug")("osdi-proxy:an:");
 
 const config = env => ({
-  page_size: 25,
+  page_size: 1000,
   actionnetwork_api_token: env.ACTIONNETWORK_API_TOKEN,
   system_name: env.SYSTEM_NAME,
   route: env.SYSTEM_NAME || env.ROUTE,
