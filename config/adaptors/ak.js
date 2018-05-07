@@ -1,7 +1,7 @@
 const log = require("debug")("osdi-proxy:ak:");
 
 const config = env => ({
-  page_size: 500,
+  page_size: 100,
   base: env.AK_BASE,
   username: env.AK_USERNAME,
   password: env.AK_PASSWORD,
