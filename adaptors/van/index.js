@@ -3,7 +3,7 @@ module.exports = config => {
   const exports = {};
 
   // "people events attendances"
-  "events"
+  "events record_attendance_helper"
     .split(" ")
     .forEach(key => (exports[key] = require(`./${key}`)(api, config)));
 

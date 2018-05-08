@@ -38,5 +38,10 @@ module.exports = (api, config) => {
     return _.uniqBy(allEvents, "id");
   };
 
-  return { count, findAll };
+  const one = async id => {
+    const result = await api.get(`events/${id}`);
+    return transform_event(config)(result.body);
+  };
+
+  return { count, findAll, one };
 };

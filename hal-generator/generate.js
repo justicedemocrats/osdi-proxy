@@ -78,7 +78,14 @@ module.exports = (resource, all_clients, config) => {
     });
 
     app.post(`/:id/${lr}`, (req, res) => {
-      // TODO - create linked resource
+      log(`GET /${lr}`);
+
+      lr_client
+        .create({ [resource]: req.params.id }, req.body)
+        .then(resp => {
+          return res.json(resp);
+        })
+        .catch(handleError(res));
     });
 
     app.put(`/:id/${lr}/:lr_id`, (req, res) => {

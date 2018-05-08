@@ -9,7 +9,7 @@ const config = env => ({
   readOnly: env.READ_ONLY == "true",
   crud: require("../../adaptors/actionnetwork"),
   resource_map: {
-    events: []
+    events: ["record_attendance_helper"]
   },
   validate: () =>
     ["SYSTEM_NAME", "ACTIONNETWORK_API_TOKEN"].forEach(variable => {

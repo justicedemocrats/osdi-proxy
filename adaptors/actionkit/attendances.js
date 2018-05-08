@@ -11,7 +11,7 @@ const osdiify = async (api, ak) => {
     attended: ak.attended,
     person: ak.user.split("/")[4],
     referrer_data: {
-      source
+      source: source
     }
   };
 };
