@@ -287,10 +287,10 @@ function configureAkify(api, config) {
       campaign: `/rest/v1/campaign/${config.defaultCampaign}/`,
       max_attendees: osdi.capacity,
       starts_at: osdi.start_date
-        ? akifyTime(osdi.start_date).format(format)
+        ? akifyTime(osdi.start_date, time_zone).format(format)
         : undefined,
       ends_at: osdi.start_date
-        ? akifyTime(osdi.end_date).format(format)
+        ? akifyTime(osdi.end_date, time_zone).format(format)
         : undefined,
       field_tags: osdi.tags ? JSON.stringify(osdi.tags) : undefined,
       field_type: osdi.type,
