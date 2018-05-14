@@ -239,6 +239,7 @@ function akifyTime(string, time_zone) {
     console.log(239);
     console.log(string);
     console.log(time_zone);
+    console.log(base_moment._tzm);
     return moment.tz(string, time_zone);
   }
 }
