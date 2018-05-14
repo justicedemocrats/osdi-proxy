@@ -225,21 +225,12 @@ function filterUndefined(obj) {
 
 function akifyTime(string, time_zone) {
   const base_moment = moment(string);
-  console.log(base_moment);
 
   if (base_moment._tzm !== undefined && base_moment._tzm !== 0) {
-    console.log(231);
     const split = string.split("-");
-    console.log(split);
     const without_last = split.slice(0, split.length - 1).join("-");
-    console.log(without_last);
-    console.log(time_zone);
     return moment.tz(without_last, time_zone);
   } else {
-    console.log(239);
-    console.log(string);
-    console.log(time_zone);
-    console.log(base_moment._tzm);
     return moment.tz(string, time_zone);
   }
 }
