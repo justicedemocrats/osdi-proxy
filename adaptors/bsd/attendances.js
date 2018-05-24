@@ -5,7 +5,7 @@ const osdiify = async (api, bsd) => {
   };
 };
 
-module.exports = api => {
+module.exports = (api, config) => {
   const cacher = require("../../lib").cacher(
     `${config.system_name}-bsd-attendance`
   );
