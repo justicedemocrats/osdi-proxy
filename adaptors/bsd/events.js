@@ -114,7 +114,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     tags: metadata.t || [],
     contact: {
       email_address: firstHaving(creator.cons_email, "email"),
-      phone_number: bsd.contact_phone,
+      // phone_number: bsd.contact_phone,
       name: bsd.creator_name || `${creator.firstname} ${creator.lastname}`
     }
   };
@@ -224,10 +224,10 @@ const configureBsdify = (api, config) => async (
         : undefined,
 
     creator_name: osdi.contact ? osdi.contact.name : undefined,
-    contact_phone:
-      osdi.contact && osdi.contact.phone_number
-        ? osdi.contact.phone_number
-        : undefined,
+    // contact_phone:
+    //   osdi.contact && osdi.contact.phone_number
+    //     ? osdi.contact.phone_number
+    //     : undefined,
 
     start_datetime_system: osdi.start_date
       ? moment.tz(osdi.start_date, time_zone).format("YYYY-MM-DD HH:mm:ss")
@@ -267,14 +267,20 @@ const configureBsdify = (api, config) => async (
       ? putDefault(existing.host_addr_state_cd)
       : undefined,
     flag_approval: osdi.status
-      ? osdi.status == "rejected" || osdi.status == "tentative" ? "1" : "0"
+      ? osdi.status == "rejected" || osdi.status == "tentative"
+        ? "1"
+        : "0"
       : undefined,
     is_searchable: osdi.status
-      ? osdi.status == "confirmed" ? 1 : 0
+      ? osdi.status == "confirmed"
+        ? 1
+        : 0
       : undefined,
     rsvp_allow: osdi.status ? (osdi.status == "confirmed" ? 1 : 0) : undefined,
     status: osdi.status
-      ? osdi.status == "rejected" || osdi.status == "cancelled" ? "0" : "1"
+      ? osdi.status == "rejected" || osdi.status == "cancelled"
+        ? "0"
+        : "1"
       : undefined,
     attendee_require_phone: "1",
     host_receive_rsvp_emails: "0",
