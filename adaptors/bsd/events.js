@@ -114,7 +114,7 @@ const configureOsdify = (api, config) => async (bsd, cons) => {
     tags: metadata.t || [],
     contact: {
       email_address: firstHaving(creator.cons_email, "email"),
-      // phone_number: bsd.contact_phone,
+      phone_number: bsd.contact_phone,
       name: bsd.creator_name || `${creator.firstname} ${creator.lastname}`
     }
   };
@@ -224,10 +224,10 @@ const configureBsdify = (api, config) => async (
         : undefined,
 
     creator_name: osdi.contact ? osdi.contact.name : undefined,
-    // contact_phone:
-    //   osdi.contact && osdi.contact.phone_number
-    //     ? osdi.contact.phone_number
-    //     : undefined,
+    contact_phone:
+      osdi.contact && osdi.contact.phone_number
+        ? osdi.contact.phone_number
+        : undefined,
 
     start_datetime_system: osdi.start_date
       ? moment.tz(osdi.start_date, time_zone).format("YYYY-MM-DD HH:mm:ss")
