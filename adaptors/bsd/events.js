@@ -361,7 +361,7 @@ module.exports = (api, config) => {
       e => e.event_id_obfuscated == result.event_id_obfuscated
     )[0];
 
-    findAll({ page: 0 });
+    // findAll({ page: 0 });
     return await osdiify(created);
   };
 
