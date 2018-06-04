@@ -374,13 +374,13 @@ module.exports = (api, config) => {
     const existing = matches[0];
     const bsdified = await bsdify(edits, existing);
     const result = await api.updateEvent(bsdified);
-    findAll({ page: 0 });
+    // findAll({ page: 0 });
     return result;
   };
 
   const doDelete = async id => {
     const result = await api.deleteEvent(id);
-    findAll({ page: 0 });
+    // findAll({ page: 0 });
     return result;
   };
 
