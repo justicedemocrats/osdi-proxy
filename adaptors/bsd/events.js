@@ -2,6 +2,7 @@ const moment = require("moment-timezone");
 const zipcode_to_timezone = require("zipcode-to-timezone");
 const transformers = require("./event-transformers");
 const eventCacheConstructor = require("./event-cache");
+const log = require("debug")("osdi-proxy:bsd:events:");
 
 const UPDATE_INTERVAL = 60000 * 10;
 
