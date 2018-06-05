@@ -87,7 +87,3 @@ module.exports = (api, config) => {
 
   return { one, findAll, create, edit, delete: doDelete, count };
 };
-
-function transformEventType(type) {
-  return type.replace(/ /g, "").toLowerCase();
-}

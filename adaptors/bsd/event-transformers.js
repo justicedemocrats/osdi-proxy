@@ -294,3 +294,7 @@ module.exports = {
     return copy;
   }
 };
+
+function transformEventType(type) {
+  return type.replace(/ /g, "").toLowerCase();
+}
