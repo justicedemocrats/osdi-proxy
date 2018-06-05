@@ -54,6 +54,8 @@ module.exports = (api, config) => {
     const result = await api.createEvent(ready);
 
     const { creator_cons_id, event_type, event_id_obfuscated } = result;
+    log("Created event %s", event_id_obfuscated);
+
     const possible_matches = await api.searchEvents({
       create_day: moment().format("YYYY-MM-DD"),
       event_type,
@@ -62,6 +64,12 @@ module.exports = (api, config) => {
     const event_id = possible_matches.filter(
       maybe => maybe.event_id_obfuscated == event_id_obfuscated
     )[0].event_id;
+
+    log(
+      "Could be one of %j. Choosing %s",
+      possible_matches.map(e => e.event_id_obfuscated),
+      event_id
+    );
 
     return await eventCache.updateOne(event_id);
   };
