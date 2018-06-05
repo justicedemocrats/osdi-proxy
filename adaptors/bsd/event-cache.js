@@ -111,7 +111,7 @@ module.exports = (api, config, cacher, osdiify, bsdify) => {
     });
 
     const result = await osdiify(matches[0]);
-    cacher.set(`event-${event.id}`, result);
+    cacher.set(`event-${id}`, result);
     return result;
   };
 
