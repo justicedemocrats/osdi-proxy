@@ -59,9 +59,9 @@ module.exports = (api, config) => {
 
     const possible_matches = await api.searchEvents({
       create_day: moment().format("YYYY-MM-DD"),
-      event_type,
       creator_cons_id
     });
+
     const event_id = possible_matches.filter(
       maybe => maybe.event_id_obfuscated == event_id_obfuscated
     )[0].event_id;
