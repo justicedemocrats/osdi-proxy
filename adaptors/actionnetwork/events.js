@@ -69,20 +69,32 @@ const fetchAllOrganizers = async (events, api) => {
 };
 
 module.exports = (api, config) => {
+  const cacher = require("../../lib").cacher(`${config.system_name}-an-event`);
+
   const count = async () => {
-    const events = await fetchAllEvents(api);
-    const allEvents = await Promise.all(
-      events.map(transform_event(api, config))
+    return await cacher.fetch_and_update(
+      "count",
+      (async () => {
+        const events = await fetchAllEvents(api);
+        const allEvents = await Promise.all(
+          events.map(transform_event(api, config))
+        );
+        return _.uniqBy(allEvents, "id").length;
+      })()
     );
-    return _.uniqBy(allEvents, "id").length;
   };
 
   const findAll = async params => {
-    const events = await fetchAllEvents(api);
-    const organizers = await fetchAllOrganizers(events, api);
-    const allEvents = events.map(transform_event(config, organizers));
-    const result = _.uniqBy(allEvents, "id");
-    return result;
+    return await cacher.fetch_and_update(
+      "all",
+      (async () => {
+        const events = await fetchAllEvents(api);
+        const organizers = await fetchAllOrganizers(events, api);
+        const allEvents = events.map(transform_event(config, organizers));
+        const result = _.uniqBy(allEvents, "id");
+        return result;
+      })()
+    );
   };
 
   const one = async id => {
