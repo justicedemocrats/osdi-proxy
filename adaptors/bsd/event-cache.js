@@ -115,6 +115,11 @@ module.exports = (api, config, cacher, osdiify, bsdify) => {
     return result;
   };
 
+  const deleteOne = async id => {
+    await cacher.del(`event-${id}`);
+    return true;
+  };
+
   const getAll = async () => {
     const ids = await cacher.keys("event-*");
 
@@ -126,7 +131,7 @@ module.exports = (api, config, cacher, osdiify, bsdify) => {
     );
   };
 
-  return { update, updateOne, getAll };
+  return { update, updateOne, deleteOne, getAll };
 };
 
 function chunkBy(list, n) {

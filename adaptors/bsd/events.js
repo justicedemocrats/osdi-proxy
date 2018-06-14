@@ -90,7 +90,7 @@ module.exports = (api, config) => {
 
   const doDelete = async id => {
     const result = await api.deleteEvent(id);
-    eventCache.updateOne(id);
+    eventCache.deleteOne(id);
     return result;
   };
 
