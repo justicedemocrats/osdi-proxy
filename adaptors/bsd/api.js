@@ -661,11 +661,11 @@ class BSD {
     let response = await this.request(
       "/event/get_event_details",
       {
-        event_id_obfuscated: id,
         api_ver: 2,
-        values: ["event_id"]
+        values: JSON.stringify({ event_id_obfuscated: id })
+        // event_id_obfuscated: id
       },
-      "POST"
+      "GET"
     );
     return response;
   }
@@ -827,6 +827,7 @@ class BSD {
         body: { event_id_obfuscated: "test" }
       };
     } else {
+      console.log(options);
       return requestPromise(options);
     }
   }

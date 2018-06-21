@@ -25,8 +25,10 @@ module.exports = (api, config) => {
     bsdify
   );
 
-  eventCache.update();
-  setInterval(() => eventCache.update(), UPDATE_INTERVAL);
+  // api.searchEvents().then(console.log);
+
+  // eventCache.update();
+  // setInterval(() => eventCache.update(), UPDATE_INTERVAL);
 
   const count = async () => {
     const events = await cacher.get(`all-1`);
@@ -62,16 +64,7 @@ module.exports = (api, config) => {
       creator_cons_id
     });
 
-    const event_id = possible_matches.filter(
-      maybe => maybe.event_id_obfuscated == event_id_obfuscated
-    )[0].event_id;
-
-    log(
-      "Could be one of %j. Choosing %s",
-      possible_matches.map(e => e.event_id_obfuscated),
-      event_id
-    );
-
+    const { event_id } = api.getEventByObfusicatedId(event_id_obfuscated);
     return await eventCache.updateOne(event_id);
   };
 
