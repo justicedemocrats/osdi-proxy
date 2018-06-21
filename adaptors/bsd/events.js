@@ -25,6 +25,11 @@ module.exports = (api, config) => {
     bsdify
   );
 
+  // api
+  //   .getEventByObfusicatedId("4jld5")
+  //   .then(console.log)
+  //   .catch(console.error);
+
   // api.searchEvents().then(console.log);
 
   // eventCache.update();
@@ -64,7 +69,7 @@ module.exports = (api, config) => {
       creator_cons_id
     });
 
-    const { event_id } = api.getEventByObfusicatedId(event_id_obfuscated);
+    const { event_id } = await api.getEventByObfusicatedId(event_id_obfuscated);
     return await eventCache.updateOne(event_id);
   };
 
