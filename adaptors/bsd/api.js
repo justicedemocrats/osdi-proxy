@@ -827,7 +827,6 @@ class BSD {
         body: { event_id_obfuscated: "test" }
       };
     } else {
-      console.log(options);
       return requestPromise(options);
     }
   }
