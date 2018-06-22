@@ -4,8 +4,13 @@ const log = require("debug")("osdi-proxy:bsd:event-cache:");
 module.exports = (api, config, cacher, osdiify, bsdify) => {
   const update = async () => {
     log("Starting cache update");
+
+    const yesterday = moment()
+      .subtract(1, "days")
+      .format("YYYY-MM-DD");
+
     const events = await api.searchEvents({
-      date_start: "2000-01-01 00:00:00"
+      date_start: `${yesterday} 00:00:00`
     });
 
     log("Got events.");
