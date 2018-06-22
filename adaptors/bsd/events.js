@@ -32,8 +32,8 @@ module.exports = (api, config) => {
 
   // api.searchEvents().then(console.log);
 
-  // eventCache.update();
-  // setInterval(() => eventCache.update(), UPDATE_INTERVAL);
+  eventCache.update();
+  setInterval(() => eventCache.update(), UPDATE_INTERVAL);
 
   const count = async () => {
     const events = await cacher.get(`all-1`);
