@@ -82,8 +82,8 @@ module.exports = (api, config) => {
     const existing = matches[0];
     const bsdified = await bsdify(edits, existing);
     const result = await api.updateEvent(bsdified);
-    eventCache.updateOne(id);
-    return result;
+    const ev = await eventCache.updateOne(id);
+    return ev;
   };
 
   const doDelete = async id => {
