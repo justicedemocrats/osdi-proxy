@@ -102,6 +102,11 @@ module.exports = (api, config, cacher, osdiify, bsdify) => {
       allEvents.map(e => osdiify(e, byId[e.creator_cons_id]))
     );
 
+    log("Clearing keys.");
+
+    const keys = await cacher.keys("event-*");
+    await Promise.all(keys.map(key => cacher.del(key)));
+
     log("Setting keys.");
 
     return await Promise.all(
