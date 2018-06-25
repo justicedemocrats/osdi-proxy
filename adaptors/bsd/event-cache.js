@@ -6,7 +6,7 @@ module.exports = (api, config, cacher, osdiify, bsdify) => {
     log("Starting cache update");
 
     const yesterday = moment()
-      .subtract(1, "days")
+      .subtract(2, "weeks")
       .format("YYYY-MM-DD");
 
     const events = await api.searchEvents({
