@@ -126,7 +126,7 @@ module.exports = (api, config, cacher, osdiify, bsdify) => {
   };
 
   const deleteOne = async id => {
-    await cacher.del(`event-${id}`);
+    await cacher.invalidate(`event-${id}`, true);
     return true;
   };
 
